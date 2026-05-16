@@ -1,0 +1,134 @@
+.weekly-chart-card {
+  background-color: var(--color-surface-container-lowest);
+  padding: var(--space-md);
+  border-radius: var(--radius-md); 
+  box-shadow: 0 var(--border-thin) var(--border-thick) 0 rgba(0, 0, 0, 0.05); 
+  border: var(--border-thin) solid var(--color-surface-container-high);
+  margin-bottom: var(--space-lg);
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-md);
+}
+
+.chart-title {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-headline-sm-size);
+  font-weight: var(--font-headline-sm-weight);
+  color: var(--color-on-surface);
+  margin: 0;
+}
+
+.chart-filters {
+  display: flex;
+  background-color: var(--color-surface-container-low);
+  padding: var(--space-xs); 
+  border-radius: var(--radius-default); 
+}
+
+.filter-btn {
+  padding: 0.375rem var(--space-gutter); 
+  border-radius: var(--radius-sm); 
+  font-family: var(--font-family-sans);
+  font-size: var(--font-label-sm-size);
+  font-weight: var(--font-label-sm-weight);
+  color: var(--color-on-surface-variant);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.filter-btn:hover:not(.active) {
+  background-color: var(--color-surface-container-high);
+}
+
+.filter-btn.active {
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+.chart-body {
+  position: relative;
+  height: 12rem; 
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  gap: var(--space-base); 
+  margin-bottom: var(--space-md);
+  padding-top: var(--space-md); 
+}
+
+.chart-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs); 
+  height: 100%;
+}
+
+.bars-wrapper {
+  width: 100%;
+  display: flex;
+  gap: var(--space-xs); 
+  align-items: flex-end;
+  height: 100%;
+}
+
+.bar {
+  flex: 1;
+  border-radius: var(--border-thick) var(--border-thick) 0 0; 
+}
+
+.sleep-bar {
+  background-color: rgba(55, 103, 85, 0.4); 
+}
+
+.energy-bar {
+  background-color: var(--color-primary);
+}
+
+.day-label {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-label-sm-size);
+  font-weight: var(--font-label-sm-weight);
+  color: var(--color-on-surface-variant);
+  margin-top: var(--space-base); 
+}
+
+.chart-legend {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-margin); 
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-base); 
+}
+
+.legend-dot {
+  width: var(--space-sm); 
+  height: var(--space-sm); 
+  border-radius: var(--radius-full);
+}
+
+.sleep-dot {
+  background-color: rgba(55, 103, 85, 0.4); 
+}
+
+.energy-dot {
+  background-color: var(--color-primary);
+}
+
+.legend-label {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-label-sm-size);
+  font-weight: var(--font-label-sm-weight);
+  color: var(--color-on-surface-variant);
+}

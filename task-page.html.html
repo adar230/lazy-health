@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="he"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lazy Health - המשימה היומית</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container": "#eceeed",
+                        "surface": "#f8faf9",
+                        "surface-container-lowest": "#ffffff",
+                        "outline-variant": "#c0c9c3",
+                        "on-secondary-container": "#266d6b",
+                        "secondary-container": "#a8ece9",
+                        "surface-dim": "#d8dada",
+                        "on-tertiary-fixed-variant": "#3e4948",
+                        "secondary-fixed": "#abefec",
+                        "inverse-on-surface": "#eff1f0",
+                        "on-tertiary": "#ffffff",
+                        "on-surface": "#191c1c",
+                        "surface-container-highest": "#e1e3e2",
+                        "secondary-fixed-dim": "#8fd2d0",
+                        "tertiary-fixed-dim": "#bec9c7",
+                        "outline": "#717974",
+                        "surface-tint": "#376755",
+                        "surface-container-high": "#e6e9e8",
+                        "primary-container": "#7eb09b",
+                        "on-primary-fixed-variant": "#1e4f3e",
+                        "tertiary-fixed": "#dae5e3",
+                        "on-secondary-fixed": "#00201f",
+                        "on-primary-fixed": "#002116",
+                        "surface-bright": "#f8faf9",
+                        "on-surface-variant": "#404944",
+                        "primary-fixed-dim": "#9ed1bb",
+                        "on-error": "#ffffff",
+                        "inverse-surface": "#2e3131",
+                        "on-secondary-fixed-variant": "#00504e",
+                        "surface-variant": "#e1e3e2",
+                        "tertiary": "#56605f",
+                        "inverse-primary": "#9ed1bb",
+                        "on-error-container": "#93000a",
+                        "on-background": "#191c1c",
+                        "on-secondary": "#ffffff",
+                        "surface-container-low": "#f2f4f3",
+                        "primary-fixed": "#baeed7",
+                        "tertiary-container": "#9da8a6",
+                        "on-tertiary-fixed": "#141d1d",
+                        "error-container": "#ffdad6",
+                        "primary": "#376755",
+                        "on-tertiary-container": "#333d3c",
+                        "on-primary-container": "#0f4333",
+                        "secondary": "#206867",
+                        "background": "#f8faf9",
+                        "error": "#ba1a1a",
+                        "on-primary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sm": "12px",
+                        "lg": "40px",
+                        "gutter": "16px",
+                        "base": "8px",
+                        "xs": "4px",
+                        "md": "24px",
+                        "margin": "24px",
+                        "xl": "64px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Manrope"],
+                        "label-md": ["Manrope"],
+                        "headline-md": ["Manrope"],
+                        "headline-sm": ["Manrope"],
+                        "body-lg": ["Manrope"],
+                        "headline-lg": ["Manrope"],
+                        "body-md": ["Manrope"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                        "label-md": ["14px", {"lineHeight": "1.2", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "headline-sm": ["20px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+            background-color: #f8faf9;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center px-margin py-base w-full fixed top-0 bg-background z-50">
+<div class="flex items-center gap-xs">
+<div class="w-8 h-8 rounded-full overflow-hidden">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="A close-up professional portrait of a calm woman with a peaceful expression, set against a soft, blurred natural background. The lighting is bright and ethereal, perfectly matching the Sage and Mint wellness app aesthetic. She has a gentle smile, embodying the concept of emotional wellness and cognitive ease defined by the brand identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDE_duhJEDDn8Wy_Sx-PaheDHAId-dPW9oYl76klJUoE3jS88d-0UHwQvPZWp-ggglWQG6b3uYDog4dXQ1LGRe7xXswmSAPTQT8yKtDXnIUlV-spn2IeP9RMcB_DGfeYauELfWckQxKkhKt3DwIQkxtS-43dYvlZ2EHniK3UE4vIuUygjGE2__bapWd1XqnKba0w-jqIYRvxa9xsdaethoypjwj_4hveqxSHbCnwh3VKrhTRxYviKL_8COvVhW_7X90y1wwZH8EgEh"/>
+</div>
+</div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">Lazy Health</h1>
+<button class="hover:opacity-80 transition-opacity active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-primary text-[28px]" data-icon="notifications">notifications</span>
+</button>
+</header>
+<main class="pt-[72px] pb-[100px] px-margin max-w-md mx-auto space-y-lg">
+<!-- Header Section -->
+<section class="space-y-sm text-right">
+<p class="font-label-md text-label-md text-on-surface-variant">המשימה שלך להיום</p>
+<h2 class="font-headline-lg text-headline-lg text-on-surface leading-tight">
+                יש לך 20 דקות — בואי נשתמש בהן
+            </h2>
+<div class="flex items-center gap-xs justify-end text-primary">
+<span class="font-label-md text-label-md font-bold">7 ימים ברצף — כל הכבוד!</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="local_fire_department" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+</div>
+</section>
+<!-- Primary Task Card -->
+<section class="bg-surface-container-lowest rounded-[24px] p-md shadow-[0_4px_20px_0_rgba(55,103,85,0.04)] space-y-md">
+<div class="flex items-start gap-md">
+<div class="bg-primary-container/20 p-sm rounded-xl">
+<span class="material-symbols-outlined text-primary text-[32px]" data-icon="directions_walk">directions_walk</span>
+</div>
+<div class="flex-1 text-right">
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-xs">הליכה של 15 דקות</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">צאי החוצה, שאפי אוויר צח, זז'י קצת.</p>
+</div>
+</div>
+<div class="flex gap-sm">
+<button class="flex-1 bg-primary text-on-primary py-sm rounded-full font-label-md text-label-md hover:opacity-90 active:scale-95 transition-all">
+                    השלמתי
+                </button>
+<button class="flex-1 bg-surface-container text-on-surface-variant py-sm rounded-full font-label-md text-label-md hover:bg-surface-container-high transition-colors">
+                    אין לי כוח
+                </button>
+</div>
+<div class="flex items-center gap-xs justify-start border-t border-surface-variant pt-sm mt-sm">
+<span class="material-symbols-outlined text-primary text-[16px]" data-icon="fitness_center">fitness_center</span>
+<span class="font-label-sm text-label-sm text-primary">פעילות גופנית</span>
+</div>
+</section>
+<!-- Fallback Task Card (Bento Style) -->
+<section class="bg-surface-container-low rounded-[24px] p-md border border-dashed border-outline-variant space-y-sm">
+<div class="flex justify-between items-center">
+<div class="bg-secondary-container/30 p-xs rounded-lg">
+<span class="material-symbols-outlined text-secondary text-[20px]" data-icon="water_drop">water_drop</span>
+</div>
+<h4 class="font-label-md text-label-md text-on-surface-variant">משימה מינימלית חלופית</h4>
+</div>
+<div class="text-right">
+<p class="font-body-md text-body-md text-on-surface">שתי כוס מים עכשיו. זה הכל. גם זה נחשב.</p>
+</div>
+<button class="w-full border border-primary text-primary py-sm rounded-full font-label-md text-label-md hover:bg-primary-container/10 transition-colors">
+                גם את זה עשיתי
+            </button>
+</section>
+<!-- Illustration/Mood Section -->
+<section class="flex flex-col items-center text-center space-y-md">
+<div class="w-full h-48 rounded-[24px] overflow-hidden">
+<img alt="Calm Nature" class="w-full h-full object-cover" data-alt="A serene, minimalist high-key photograph of a single green leaf with dewdrops in a soft focus background. The lighting is diffused and bright, creating a clean light-mode aesthetic. The color palette consists of soft Sage Greens and Mint tones, evoking a sense of tranquility, breathing room, and emotional wellness consistent with the Lazy Health brand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDyCuApFxnIb9aUiY9u1pnDMjUs43R2cdVQMRsA2utbxzdAv-WtQlIgDlg78NrrMLJhV5CR4clcODyvvAUx00wc-NhEyni-Oy7k3M-xyVSG0lkyzi85KBNdtaGYkohl-K23EEu-lG_hejUx8nxvae6aB-pWPXfkn-EJZ5z8tbpryAb3bGzxkntbJE1z4FY3qvgTnYbYWTromQ1ixCSnbcTs75yBUvrR7Wg_-U6tOKi0jt1x0aNFrYkGpgMnezFC9A4rjMQgjrQ1fZ0c"/>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant italic px-md">
+                "הדרך הקלה ביותר להתחיל היא פשוט לעשות משהו קטן."
+            </p>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-4 py-3 bg-surface-container-lowest shadow-[0_-4px_20px_0_rgba(55,103,85,0.04)] rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-1 hover:bg-surface-container-high transition-colors active:scale-95 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="spa">spa</span>
+<span class="font-label-sm text-label-sm">Wellness</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-1 hover:bg-surface-container-high transition-colors active:scale-95 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="fitness_center">fitness_center</span>
+<span class="font-label-sm text-label-sm">Activity</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-5 py-1 active:scale-95 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="edit_note" style="font-variation-settings: 'FILL' 1;">edit_note</span>
+<span class="font-label-sm text-label-sm">Log</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-1 hover:bg-surface-container-high transition-colors active:scale-95 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-sm text-label-sm">Profile</span>
+</a>
+</nav>
+</body></html>

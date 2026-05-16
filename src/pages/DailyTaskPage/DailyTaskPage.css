@@ -1,0 +1,49 @@
+.daily-task-page {
+  max-width: 28rem; /* max-w-md */
+  margin: 0 auto;
+  padding: 0 var(--space-margin);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.task-page-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.task-page-subtitle {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-label-md-size);
+  font-weight: var(--font-label-md-weight);
+  color: var(--color-on-surface-variant);
+  margin: 0;
+}
+
+.task-page-title {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-headline-lg-size);
+  font-weight: var(--font-headline-lg-weight);
+  color: var(--color-on-surface);
+  line-height: var(--font-headline-lg-line-height);
+  margin: 0;
+}
+
+.streak-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--space-xs);
+  color: var(--color-primary);
+}
+
+.streak-text {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-label-md-size);
+  font-weight: 700;
+}
+
+.streak-icon {
+  font-size: 1.125rem;
+}

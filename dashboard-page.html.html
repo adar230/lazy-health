@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="he"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container": "#eceeed",
+                        "surface": "#f8faf9",
+                        "surface-container-lowest": "#ffffff",
+                        "outline-variant": "#c0c9c3",
+                        "on-secondary-container": "#266d6b",
+                        "secondary-container": "#a8ece9",
+                        "surface-dim": "#d8dada",
+                        "on-tertiary-fixed-variant": "#3e4948",
+                        "secondary-fixed": "#abefec",
+                        "inverse-on-surface": "#eff1f0",
+                        "on-tertiary": "#ffffff",
+                        "on-surface": "#191c1c",
+                        "surface-container-highest": "#e1e3e2",
+                        "secondary-fixed-dim": "#8fd2d0",
+                        "tertiary-fixed-dim": "#bec9c7",
+                        "outline": "#717974",
+                        "surface-tint": "#376755",
+                        "surface-container-high": "#e6e9e8",
+                        "primary-container": "#7eb09b",
+                        "on-primary-fixed-variant": "#1e4f3e",
+                        "tertiary-fixed": "#dae5e3",
+                        "on-secondary-fixed": "#00201f",
+                        "on-primary-fixed": "#002116",
+                        "surface-bright": "#f8faf9",
+                        "on-surface-variant": "#404944",
+                        "primary-fixed-dim": "#9ed1bb",
+                        "on-error": "#ffffff",
+                        "inverse-surface": "#2e3131",
+                        "on-secondary-fixed-variant": "#00504e",
+                        "surface-variant": "#e1e3e2",
+                        "tertiary": "#56605f",
+                        "inverse-primary": "#9ed1bb",
+                        "on-error-container": "#93000a",
+                        "on-background": "#191c1c",
+                        "on-secondary": "#ffffff",
+                        "surface-container-low": "#f2f4f3",
+                        "primary-fixed": "#baeed7",
+                        "tertiary-container": "#9da8a6",
+                        "on-tertiary-fixed": "#141d1d",
+                        "error-container": "#ffdad6",
+                        "primary": "#376755",
+                        "on-tertiary-container": "#333d3c",
+                        "on-primary-container": "#0f4333",
+                        "secondary": "#206867",
+                        "background": "#f8faf9",
+                        "error": "#ba1a1a",
+                        "on-primary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sm": "12px",
+                        "lg": "40px",
+                        "gutter": "16px",
+                        "base": "8px",
+                        "xs": "4px",
+                        "md": "24px",
+                        "margin": "24px",
+                        "xl": "64px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Manrope"],
+                        "label-md": ["Manrope"],
+                        "headline-md": ["Manrope"],
+                        "headline-sm": ["Manrope"],
+                        "body-lg": ["Manrope"],
+                        "headline-lg": ["Manrope"],
+                        "body-md": ["Manrope"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                        "label-md": ["14px", {"lineHeight": "1.2", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "headline-sm": ["20px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="bg-background dark:bg-inverse-surface fixed top-0 w-full z-50 flex justify-between items-center px-margin py-base h-16">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden">
+<img alt="User" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7oTfv1A-mjhpcDkmUoBc6StMP6Ix5VgZ1Lt-HS22Kd7ZpcEtzGxVyOeP3xVz6G8sSbGB_lfEJ8bKGNsOeTrMA-DtcmYPmPQ7QOr5K3pwbCahf50VHlSoVj0GtuM2U7HgkA5cyccmMa8YDgo_BEAr4pIwmbQgRULTtT-E9NQm_B7BYyaEjiWneazopZGgGkf2UeWtDyfOo3e0NTLE_DTpUtm22zLYxinaaYecId5FbBdSfml_3bQCrFD8MD1TNYabHRl6wHpwWLBvH"/>
+</div>
+<span class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim">Lazy Health</span>
+</div>
+<button class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant hover:opacity-80 transition-opacity active:scale-95 transition-transform">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+</header>
+<main class="mt-20 px-margin max-w-2xl mx-auto">
+<!-- Dashboard Header -->
+<section class="mb-lg pt-4">
+<span class="text-on-surface-variant font-label-md text-label-md block mb-1">דשבורד שבועי</span>
+<h1 class="font-headline-lg text-headline-lg text-on-surface">!היי, שבת טוב</h1>
+<p class="text-on-surface-variant font-body-md text-body-md mt-1">הנה איך הייתה השבוע שלך</p>
+</section>
+<!-- Stats Grid -->
+<section class="grid grid-cols-3 gap-3 mb-lg">
+<div class="bg-surface-container-lowest p-4 rounded-xl shadow-sm text-center border border-surface-container-high">
+<span class="material-symbols-outlined text-primary mb-2" data-icon="edit_note">edit_note</span>
+<div class="font-headline-md text-headline-md text-on-surface">5/7</div>
+<div class="text-on-surface-variant font-label-sm text-label-sm">משימות</div>
+</div>
+<div class="bg-surface-container-lowest p-4 rounded-xl shadow-sm text-center border border-surface-container-high">
+<span class="material-symbols-outlined text-primary mb-2" data-icon="spa">spa</span>
+<div class="font-headline-md text-headline-md text-on-surface">6.8</div>
+<div class="text-on-surface-variant font-label-sm text-label-sm">שעות שינה</div>
+</div>
+<div class="bg-surface-container-lowest p-4 rounded-xl shadow-sm text-center border border-surface-container-high">
+<span class="material-symbols-outlined text-primary mb-2" data-icon="fitness_center">fitness_center</span>
+<div class="font-headline-md text-headline-md text-on-surface">7</div>
+<div class="text-on-surface-variant font-label-sm text-label-sm">ימים ברצף</div>
+</div>
+</section>
+<!-- Chart Section -->
+<section class="bg-surface-container-lowest p-md rounded-xl shadow-sm mb-lg border border-surface-container-high">
+<div class="flex justify-between items-center mb-md">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">אנרגיה VS שינה</h3>
+<div class="flex bg-surface-container-low p-1 rounded-lg">
+<button class="px-4 py-1.5 rounded-md font-label-sm text-label-sm text-on-surface-variant hover:bg-surface-container-high transition-colors">חודש</button>
+<button class="px-4 py-1.5 rounded-md font-label-sm text-label-sm bg-primary text-on-primary">שבוע</button>
+</div>
+</div>
+<!-- Fake Bar Chart -->
+<div class="relative h-48 flex items-end justify-around gap-2 mb-md pt-6">
+<!-- Data bars -->
+<div class="flex-1 flex flex-col items-center gap-1 group">
+<div class="w-full flex gap-1 items-end h-full">
+<div class="flex-1 bg-primary/40 rounded-t-sm" style="height: 60%;"></div>
+<div class="flex-1 bg-primary rounded-t-sm" style="height: 40%;"></div>
+</div>
+<span class="text-label-sm font-label-sm text-on-surface-variant mt-2">א'</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-1 group">
+<div class="w-full flex gap-1 items-end h-full">
+<div class="flex-1 bg-primary/40 rounded-t-sm" style="height: 75%;"></div>
+<div class="flex-1 bg-primary rounded-t-sm" style="height: 55%;"></div>
+</div>
+<span class="text-label-sm font-label-sm text-on-surface-variant mt-2">ב'</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-1 group">
+<div class="w-full flex gap-1 items-end h-full">
+<div class="flex-1 bg-primary/40 rounded-t-sm" style="height: 90%;"></div>
+<div class="flex-1 bg-primary rounded-t-sm" style="height: 80%;"></div>
+</div>
+<span class="text-label-sm font-label-sm text-on-surface-variant mt-2">ג'</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-1 group">
+<div class="w-full flex gap-1 items-end h-full">
+<div class="flex-1 bg-primary/40 rounded-t-sm" style="height: 65%;"></div>
+<div class="flex-1 bg-primary rounded-t-sm" style="height: 45%;"></div>
+</div>
+<span class="text-label-sm font-label-sm text-on-surface-variant mt-2">ד'</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-1 group">
+<div class="w-full flex gap-1 items-end h-full">
+<div class="flex-1 bg-primary/40 rounded-t-sm" style="height: 85%;"></div>
+<div class="flex-1 bg-primary rounded-t-sm" style="height: 95%;"></div>
+</div>
+<span class="text-label-sm font-label-sm text-on-surface-variant mt-2">ה'</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-1 group">
+<div class="w-full flex gap-1 items-end h-full">
+<div class="flex-1 bg-primary/40 rounded-t-sm" style="height: 70%;"></div>
+<div class="flex-1 bg-primary rounded-t-sm" style="height: 60%;"></div>
+</div>
+<span class="text-label-sm font-label-sm text-on-surface-variant mt-2">ו'</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-1 group">
+<div class="w-full flex gap-1 items-end h-full">
+<div class="flex-1 bg-primary/40 rounded-t-sm" style="height: 50%;"></div>
+<div class="flex-1 bg-primary rounded-t-sm" style="height: 30%;"></div>
+</div>
+<span class="text-label-sm font-label-sm text-on-surface-variant mt-2">ש'</span>
+</div>
+</div>
+<!-- Legend -->
+<div class="flex justify-center gap-6">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-primary/40"></div>
+<span class="text-label-sm font-label-sm text-on-surface-variant">שינה</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-primary"></div>
+<span class="text-label-sm font-label-sm text-on-surface-variant">אנרגיה</span>
+</div>
+</div>
+</section>
+<!-- Insight Card -->
+<div class="bg-secondary-container/30 p-md rounded-xl mb-lg flex gap-4 items-center">
+<div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container shrink-0">
+<span class="material-symbols-outlined" data-icon="lightbulb">lightbulb</span>
+</div>
+<div>
+<h4 class="font-label-md text-label-md text-on-secondary-container">שינה ואנרגיה קשורות אצלך</h4>
+<p class="text-on-surface-variant font-label-sm text-label-sm">בימים שישנת מעל 7 שעות, האנרגיה הייתה גבוהה ב-40%.</p>
+</div>
+</div>
+<!-- Empty State / Action Card -->
+<section class="bg-surface-container-high/40 p-xl rounded-xl border-2 border-dashed border-outline-variant text-center">
+<div class="w-20 h-20 mx-auto bg-surface-container-highest rounded-full flex items-center justify-center mb-md">
+<span class="material-symbols-outlined text-outline-variant text-4xl" data-icon="pending_actions">pending_actions</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-2">עדיין אין מספיק נתונים</h3>
+<p class="text-on-surface-variant font-body-md text-body-md mb-lg">מלאי עוד כמה שאלונים יומיים לתובנות מעמיקות יותר.</p>
+<button class="bg-primary text-on-primary px-8 py-3 rounded-full font-label-md text-label-md shadow-md hover:opacity-90 active:scale-95 transition-all">
+                מלאי שאלון עכשיו
+            </button>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="bg-surface-container-lowest dark:bg-inverse-surface fixed bottom-0 w-full z-50 flex justify-around items-center px-4 py-3 rounded-t-xl shadow-[0_-4px_20px_0_rgba(55,103,85,0.04)]">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant px-5 py-1 hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="spa">spa</span>
+<span class="font-label-sm text-label-sm">Wellness</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant px-5 py-1 hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="fitness_center">fitness_center</span>
+<span class="font-label-sm text-label-sm">Activity</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container dark:bg-primary text-on-primary-container dark:text-on-primary rounded-full px-5 py-1 active:scale-95 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="edit_note">edit_note</span>
+<span class="font-label-sm text-label-sm">Log</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant px-5 py-1 hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-sm text-label-sm">Profile</span>
+</a>
+</nav>
+</body></html>

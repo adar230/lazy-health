@@ -1,0 +1,23 @@
+.pill-button {
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  border: var(--border-thin) solid var(--color-outline-variant);
+  font-family: var(--font-family-sans);
+  font-size: var(--font-body-md-size);
+  font-weight: var(--font-body-md-weight);
+  color: var(--color-on-surface);
+  background-color: transparent;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pill-button:hover:not(.selected) {
+  background-color: var(--color-surface-container-high);
+}
+.pill-button.selected {
+  background-color: var(--color-primary-container);
+  color: var(--color-on-primary-container);
+  border-color: transparent;
+}

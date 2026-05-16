@@ -1,0 +1,24 @@
+.stat-card {
+  background-color: var(--color-surface-container-lowest);
+  padding: var(--space-gutter); 
+  border-radius: var(--radius-md); 
+  box-shadow: 0 var(--border-thin) var(--border-thick) 0 rgba(0, 0, 0, 0.05); 
+  text-align: center;
+  border: var(--border-thin) solid var(--color-surface-container-high);
+}
+.stat-icon {
+  color: var(--color-primary);
+  margin-bottom: var(--space-base); 
+}
+.stat-number {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-headline-md-size);
+  font-weight: var(--font-headline-md-weight);
+  color: var(--color-on-surface);
+}
+.stat-label {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-label-sm-size);
+  font-weight: var(--font-label-sm-weight);
+  color: var(--color-on-surface-variant);
+}

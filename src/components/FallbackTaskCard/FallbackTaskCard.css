@@ -1,0 +1,58 @@
+.fallback-card {
+  background-color: var(--color-surface-container-low);
+  border-radius: var(--radius-xl);
+  padding: var(--space-md);
+  border: var(--border-thin) dashed var(--color-outline-variant);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+.fallback-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.fallback-icon-container {
+  background-color: rgba(168, 236, 233, 0.3); 
+  padding: var(--space-xs);
+  border-radius: var(--radius-default); 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.fallback-icon {
+  color: var(--color-secondary);
+  font-size: 1.25rem;
+}
+.fallback-label {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-label-md-size);
+  font-weight: var(--font-label-md-weight);
+  color: var(--color-on-surface-variant);
+  margin: 0;
+}
+.fallback-content {
+}
+.fallback-desc {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-body-md-size);
+  font-weight: var(--font-body-md-weight);
+  color: var(--color-on-surface);
+  margin: 0;
+}
+.fallback-btn {
+  width: 100%;
+  border: var(--border-thin) solid var(--color-primary);
+  color: var(--color-primary);
+  background-color: transparent;
+  padding: var(--space-sm) 0;
+  border-radius: var(--radius-full);
+  font-family: var(--font-family-sans);
+  font-size: var(--font-label-md-size);
+  font-weight: var(--font-label-md-weight);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.fallback-btn:hover {
+  background-color: rgba(126, 176, 155, 0.1);
+}

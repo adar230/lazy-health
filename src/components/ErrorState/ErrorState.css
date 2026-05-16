@@ -1,0 +1,18 @@
+.error-state {
+  background-color: var(--color-error-container);
+  color: var(--color-on-error-container);
+  padding: var(--space-sm);
+  border-radius: var(--radius-default);
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  margin-top: var(--space-md);
+}
+.error-icon {
+  font-size: 1.125rem;
+}
+.error-message {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-label-md-size);
+  font-weight: var(--font-label-md-weight);
+}

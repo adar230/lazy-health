@@ -1,0 +1,70 @@
+.hero-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-base);
+  margin-top: 2rem;
+}
+.hero-greeting {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-label-sm-size);
+  font-weight: var(--font-label-sm-weight);
+  letter-spacing: var(--font-label-sm-letter-spacing);
+  color: var(--color-on-surface-variant);
+  margin: 0;
+}
+.hero-title {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-headline-lg-size);
+  font-weight: var(--font-headline-lg-weight);
+  line-height: var(--font-headline-lg-line-height);
+  letter-spacing: var(--font-headline-lg-letter-spacing);
+  color: var(--color-on-surface);
+  margin: 0;
+}
+.hero-subtitle {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-body-md-size);
+  font-weight: var(--font-body-md-weight);
+  line-height: var(--font-body-md-line-height);
+  color: var(--color-on-surface-variant);
+  opacity: 0.8;
+  margin: 0;
+}
+.hero-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  margin-top: var(--space-md);
+}
+.btn-primary-container {
+  width: 100%;
+  padding: var(--space-sm) 0;
+  background-color: var(--color-surface-container-highest);
+  color: var(--color-on-surface);
+  font-family: var(--font-family-sans);
+  font-size: var(--font-label-md-size);
+  font-weight: var(--font-label-md-weight);
+  border-radius: var(--radius-xl);
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.btn-primary-container:hover {
+  background-color: var(--color-surface-variant);
+}
+.btn-transparent {
+  width: 100%;
+  padding: var(--space-sm) 0;
+  background-color: transparent;
+  color: var(--color-on-surface-variant);
+  font-family: var(--font-family-sans);
+  font-size: var(--font-label-md-size);
+  font-weight: var(--font-label-md-weight);
+  border-radius: var(--radius-xl);
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.btn-transparent:hover {
+  background-color: var(--color-surface-container-low);
+}

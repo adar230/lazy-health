@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="he"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lazy Health - Questionnaire</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container": "#eceeed",
+                        "surface": "#f8faf9",
+                        "surface-container-lowest": "#ffffff",
+                        "outline-variant": "#c0c9c3",
+                        "on-secondary-container": "#266d6b",
+                        "secondary-container": "#a8ece9",
+                        "surface-dim": "#d8dada",
+                        "on-tertiary-fixed-variant": "#3e4948",
+                        "secondary-fixed": "#abefec",
+                        "inverse-on-surface": "#eff1f0",
+                        "on-tertiary": "#ffffff",
+                        "on-surface": "#191c1c",
+                        "surface-container-highest": "#e1e3e2",
+                        "secondary-fixed-dim": "#8fd2d0",
+                        "tertiary-fixed-dim": "#bec9c7",
+                        "outline": "#717974",
+                        "surface-tint": "#376755",
+                        "surface-container-high": "#e6e9e8",
+                        "primary-container": "#7eb09b",
+                        "on-primary-fixed-variant": "#1e4f3e",
+                        "tertiary-fixed": "#dae5e3",
+                        "on-secondary-fixed": "#00201f",
+                        "on-primary-fixed": "#002116",
+                        "surface-bright": "#f8faf9",
+                        "on-surface-variant": "#404944",
+                        "primary-fixed-dim": "#9ed1bb",
+                        "on-error": "#ffffff",
+                        "inverse-surface": "#2e3131",
+                        "on-secondary-fixed-variant": "#00504e",
+                        "surface-variant": "#e1e3e2",
+                        "tertiary": "#56605f",
+                        "inverse-primary": "#9ed1bb",
+                        "on-error-container": "#93000a",
+                        "on-background": "#191c1c",
+                        "on-secondary": "#ffffff",
+                        "surface-container-low": "#f2f4f3",
+                        "primary-fixed": "#baeed7",
+                        "tertiary-container": "#9da8a6",
+                        "on-tertiary-fixed": "#141d1d",
+                        "error-container": "#ffdad6",
+                        "primary": "#376755",
+                        "on-tertiary-container": "#333d3c",
+                        "on-primary-container": "#0f4333",
+                        "secondary": "#206867",
+                        "background": "#f8faf9",
+                        "error": "#ba1a1a",
+                        "on-primary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sm": "12px",
+                        "lg": "40px",
+                        "gutter": "16px",
+                        "base": "8px",
+                        "xs": "4px",
+                        "md": "24px",
+                        "margin": "24px",
+                        "xl": "64px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Manrope"],
+                        "label-md": ["Manrope"],
+                        "headline-md": ["Manrope"],
+                        "headline-sm": ["Manrope"],
+                        "body-lg": ["Manrope"],
+                        "headline-lg": ["Manrope"],
+                        "body-md": ["Manrope"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                        "label-md": ["14px", {"lineHeight": "1.2", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "headline-sm": ["20px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-32">
+<!-- TopAppBar Shell -->
+<header class="flex justify-between items-center px-margin py-base w-full fixed top-0 bg-background z-50">
+<div class="flex items-center gap-xs">
+<div class="w-10 h-10 rounded-full bg-surface-container overflow-hidden flex items-center justify-center">
+<img alt="User profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCs66lrcuszatkclIOfG3Fo9HW1NKgWfmFN5EcseT1s61iZJXDhcZqjc8DWvD5g8sHirOJMTFPaJkzjX6zoCDauXhaSgJmN8i7SCjabXv71IWQcaRuz3jatiiQlncYsuanijinmmBIopzg1Lyv7P0D3SUg4OMKXYhXv9-gi5-cuSW9_ifitRgVjhlivxECesVSJ5DQw3TLhI5Ga4UrtkxYO5qUm3ZKkfV66n-bSZh3Kz1yleBA_IOhfkuRCuw3U9fE7-JDTgcoV_ORw"/>
+</div>
+</div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">Lazy Health</h1>
+<button class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+</button>
+</header>
+<main class="pt-24 px-margin max-w-lg mx-auto">
+<!-- Progress Indicator -->
+<div class="mb-lg">
+<span class="font-label-md text-label-md text-on-surface-variant">שאלון בוקר</span>
+<div class="flex justify-between items-end mt-xs">
+<h2 class="font-headline-lg text-headline-lg text-on-surface leading-tight">בוקר טוב! איך התעוררת?</h2>
+<span class="font-label-md text-label-md text-primary mb-1">מתוך 3</span>
+</div>
+<div class="w-full h-1 bg-surface-container-highest rounded-full mt-sm">
+<div class="w-2/3 h-full bg-primary rounded-full"></div>
+</div>
+</div>
+<section class="space-y-md">
+<!-- Question 1 -->
+<div class="bg-surface-container-lowest p-md rounded-[24px] shadow-sm border border-transparent">
+<div class="flex items-start gap-xs mb-md">
+<span class="material-symbols-outlined text-primary text-[20px]">bedtime</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">כמה שעות ישנת?</h3>
+</div>
+<div class="grid grid-cols-2 gap-sm">
+<button class="py-sm px-md rounded-xl border border-outline-variant font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors">פחות מ-5</button>
+<button class="py-sm px-md rounded-xl border border-outline-variant font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors">6—7</button>
+<button class="py-sm px-md rounded-xl border border-outline-variant font-body-md text-body-md text-on-surface bg-primary-container text-on-primary-container">7—8</button>
+<button class="py-sm px-md rounded-xl border border-outline-variant font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors">יותר מ-8</button>
+</div>
+</div>
+<!-- Question 2 -->
+<div class="bg-surface-container-lowest p-md rounded-[24px] shadow-sm border border-transparent">
+<div class="flex items-start gap-xs mb-md">
+<span class="material-symbols-outlined text-primary text-[20px]">sentiment_satisfied</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">איך את מרגישה?</h3>
+</div>
+<div class="flex justify-between gap-xs">
+<button class="w-12 h-12 rounded-xl border border-outline-variant flex items-center justify-center font-headline-sm text-headline-sm hover:bg-surface-container-high transition-colors">1</button>
+<button class="w-12 h-12 rounded-xl border border-outline-variant flex items-center justify-center font-headline-sm text-headline-sm hover:bg-surface-container-high transition-colors">2</button>
+<button class="w-12 h-12 rounded-xl border border-outline-variant flex items-center justify-center font-headline-sm text-headline-sm bg-surface-container-high">3</button>
+<button class="w-12 h-12 rounded-xl border border-outline-variant flex items-center justify-center font-headline-sm text-headline-sm hover:bg-surface-container-high transition-colors">4</button>
+<button class="w-12 h-12 rounded-xl border border-outline-variant flex items-center justify-center font-headline-sm text-headline-sm hover:bg-surface-container-high transition-colors">5</button>
+</div>
+</div>
+<!-- Question 3 - Error State -->
+<div class="bg-surface-container-lowest p-md rounded-[24px] shadow-sm border-2 border-error/20 ring-1 ring-error/10">
+<div class="flex items-start gap-xs mb-md">
+<span class="material-symbols-outlined text-error text-[20px]">schedule</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">כמה זמן פנוי יש לך?</h3>
+</div>
+<div class="grid grid-cols-2 gap-sm mb-md">
+<button class="py-sm px-md rounded-xl border border-outline-variant font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors">פחות מ-10</button>
+<button class="py-sm px-md rounded-xl border border-outline-variant font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors">10—20 דק'</button>
+<button class="py-sm px-md rounded-xl border border-outline-variant font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors col-span-2">יותר משעה</button>
+</div>
+<div class="bg-error-container text-on-error-container p-sm rounded-lg flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px]">error</span>
+<span class="font-label-md text-label-md">שדה חובה — בחר לפי המשיך</span>
+</div>
+</div>
+<!-- Main CTA -->
+<button class="w-full bg-primary text-on-primary py-md rounded-xl font-headline-sm text-headline-sm shadow-lg active:scale-95 transition-transform mt-lg">
+                שלח ועבור למשימה
+            </button>
+</section>
+<!-- Decorative Illustration -->
+<div class="mt-xl flex flex-col items-center opacity-40">
+<img class="w-48 h-48 object-cover rounded-[48px] grayscale" data-alt="A minimalist and artistic black and white photograph of a yoga practitioner in a serene pose, emphasizing clean lines and balanced composition. The image reflects a sense of calm and mental clarity within a bright, airy studio environment. The aesthetic is sophisticated and tranquil, perfectly complementing the restorative health theme of the application." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZGtwPYu5J2RhpcRS5THqew4N1oAPK8OM1-vIEKayhWjMHs4lcdyVZNFoW19k-r1IIu4BtaoJFAPoiJoM0SpSVcPkwtYrX2fJUhKdxJnqDwSdhz1C5XLS4t7SLA4OvshJdrdxW2FRvNJ9SPfi9uWynybd5MvAVCSqk6Mkh7xL2RVfZxF3oM8sBZV9yfO5dRoByMQTb2N0D9ObOcd6qFyb8FjcIi6iUuyjvunx6iMUSSQzfOIwHmqPy-ABj7IlX-Rx2FOCBv9XGkS1e"/>
+<p class="font-body-md text-body-md text-on-surface-variant text-center mt-md">זמן לעצמך הוא לא בזבוז זמן.</p>
+</div>
+</main>
+<!-- BottomNavBar Shell -->
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-4 py-3 bg-surface-container-lowest shadow-[0_-4px_20px_0_rgba(55,103,85,0.04)] rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-1 hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined">spa</span>
+<span class="font-label-sm text-label-sm">Wellness</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-1 hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined">fitness_center</span>
+<span class="font-label-sm text-label-sm">Activity</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-5 py-1 active:scale-95 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">edit_note</span>
+<span class="font-label-sm text-label-sm">Log</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-1 hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-sm text-label-sm">Profile</span>
+</a>
+</nav>
+</body></html>

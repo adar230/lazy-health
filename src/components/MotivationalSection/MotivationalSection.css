@@ -1,0 +1,27 @@
+.motivational-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-md);
+}
+.motivational-image-container {
+  width: 100%;
+  height: 12rem; 
+  border-radius: var(--radius-xl); 
+  overflow: hidden;
+}
+.motivational-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.motivational-quote {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-body-md-size);
+  font-weight: var(--font-body-md-weight);
+  color: var(--color-on-surface-variant);
+  font-style: italic;
+  padding: 0 var(--space-md);
+  margin: 0;
+}
