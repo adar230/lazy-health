@@ -1,26 +1,72 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { supabase } from '../../lib/supabase';
 import './LoginPage.css';
 
 const LoginPage = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+      
+      navigate('/checkin');
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="auth-page">
       <div className="auth-card">
         <h2 className="auth-title">התחברות</h2>
         <p className="auth-subtitle">ברוכים השבים! אנא הזינו את פרטי ההתחברות.</p>
         
-        <form className="auth-form" onSubmit={e => e.preventDefault()}>
+        {error && <div className="auth-error">{error}</div>}
+
+        <form className="auth-form" onSubmit={handleLogin}>
           <div className="form-group">
             <label htmlFor="email">אימייל</label>
-            <input type="email" id="email" placeholder="הכנס אימייל" />
+            <input 
+              type="email" 
+              id="email" 
+              placeholder="הכנס אימייל" 
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
           </div>
           
           <div className="form-group">
             <label htmlFor="password">סיסמה</label>
-            <input type="password" id="password" placeholder="הכנס סיסמה" />
+            <input 
+              type="password" 
+              id="password" 
+              placeholder="הכנס סיסמה" 
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
           </div>
           
-          <button type="submit" className="auth-submit-btn">התחבר</button>
+          <button type="submit" className="auth-submit-btn" disabled={loading}>
+            {loading ? 'מתחבר...' : 'התחבר'}
+          </button>
         </form>
         
         <div className="auth-link">
