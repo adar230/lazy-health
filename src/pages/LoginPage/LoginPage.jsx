@@ -48,7 +48,6 @@ const LoginPage = () => {
               placeholder="הכנס אימייל" 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required
             />
           </div>
           
@@ -60,11 +59,10 @@ const LoginPage = () => {
               placeholder="הכנס סיסמה" 
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              required
             />
           </div>
           
-          <button type="submit" className="auth-submit-btn" disabled={loading}>
+          <button type="submit" className="auth-submit-btn" disabled={loading} onClick={handleLogin}>
             {loading ? 'מתחבר...' : 'התחבר'}
           </button>
         </form>

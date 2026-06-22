@@ -54,7 +54,6 @@ const RegisterPage = () => {
               placeholder="הכנס שם מלא" 
               value={name}
               onChange={(e) => setName(e.target.value)}
-              required
             />
           </div>
           
@@ -66,7 +65,6 @@ const RegisterPage = () => {
               placeholder="הכנס אימייל" 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required
             />
           </div>
           
@@ -78,11 +76,10 @@ const RegisterPage = () => {
               placeholder="בחר סיסמה" 
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              required
             />
           </div>
           
-          <button type="submit" className="auth-submit-btn" disabled={loading}>
+          <button type="submit" className="auth-submit-btn" disabled={loading} onClick={handleRegister}>
             {loading ? 'מבצע הרשמה...' : 'הירשם'}
           </button>
         </form>
