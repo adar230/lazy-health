@@ -7,6 +7,8 @@ import DailyTaskPage from './pages/DailyTaskPage/DailyTaskPage';
 import DashboardPage from './pages/DashboardPage/DashboardPage';
 import LoginPage from './pages/LoginPage/LoginPage';
 import RegisterPage from './pages/RegisterPage/RegisterPage';
+import ProfilePage from './pages/ProfilePage/ProfilePage';
+import PaymentSuccessPage from './pages/PaymentSuccessPage/PaymentSuccessPage';
 
 function App() {
   return (
@@ -18,6 +20,8 @@ function App() {
         <Route path="/checkin" element={<DailyCheckInPage />} />
         <Route path="/task" element={<DailyTaskPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/payment-success" element={<PaymentSuccessPage />} />
         <Route path="*" element={<LandingPage />} />
       </Route>
     </Routes>

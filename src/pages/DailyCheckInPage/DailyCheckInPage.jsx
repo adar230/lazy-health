@@ -1,10 +1,91 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import ProgressBar from '../../components/ProgressBar/ProgressBar';
 import QuestionCard from '../../components/QuestionCard/QuestionCard';
 import PillButton from '../../components/PillButton/PillButton';
+import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../contexts/AuthContext';
+import { generateDailyTask } from '../../lib/gemini';
 import './DailyCheckInPage.css';
 
 const DailyCheckInPage = () => {
+  const [sleepHours, setSleepHours] = useState(null);
+  const [energyLevel, setEnergyLevel] = useState(null);
+  const [freeTime, setFreeTime] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [submitError, setSubmitError] = useState('');
+  const [missingFields, setMissingFields] = useState([]);
+  
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const sleepOptions = ['פחות מ-5', '5—6', '6—7', '7—8', 'יותר מ-8'];
+  const energyOptions = ['1', '2', '3', '4', '5'];
+
+  const handleSubmit = async () => {
+    setSubmitError('');
+    const missing = [];
+    if (!sleepHours) missing.push('sleep');
+    if (!energyLevel) missing.push('energy');
+    if (!freeTime) missing.push('freeTime');
+
+    if (missing.length > 0) {
+      setMissingFields(missing);
+      return;
+    }
+    
+    setMissingFields([]);
+    setLoading(true);
+
+    let freeTimeInt = 15;
+    if (freeTime === 'פחות מ-10') freeTimeInt = 5;
+    else if (freeTime === "10—20 דק'") freeTimeInt = 15;
+    else if (freeTime === 'יותר משעה') freeTimeInt = 60;
+
+    let sleepHoursFloat = 7.5;
+    if (sleepHours === 'פחות מ-5') sleepHoursFloat = 4;
+    else if (sleepHours === '5—6' || sleepHours === '5-6') sleepHoursFloat = 5.5;
+    else if (sleepHours === '6—7' || sleepHours === '6-7') sleepHoursFloat = 6.5;
+    else if (sleepHours === '7—8' || sleepHours === '7-8') sleepHoursFloat = 7.5;
+    else if (sleepHours === 'יותר מ-8') sleepHoursFloat = 9;
+
+    try {
+      const { data: checkinData, error: checkinError } = await supabase.from('daily_checkins').insert({
+        user_id: user?.id,
+        date: new Date().toISOString().split('T')[0],
+        sleep_hours: sleepHoursFloat,
+        energy_level: parseInt(energyLevel, 10),
+        free_time: freeTimeInt,
+        checkin_type: 'morning'
+      }).select().single();
+
+      if (checkinError) throw checkinError;
+
+      // Generate task with AI
+      const aiTask = await generateDailyTask(sleepHours, energyLevel, freeTime);
+
+      // Save task to Supabase
+      const { error: taskError } = await supabase.from('tasks').insert({
+        user_id: user?.id,
+        checkin_id: checkinData.id,
+        title: aiTask.title,
+        description: aiTask.description,
+        category: aiTask.category,
+        difficulty: aiTask.difficulty,
+        is_completed: false,
+        is_minimal: false
+      });
+
+      if (taskError) throw taskError;
+
+      navigate('/task');
+    } catch (err) {
+      setSubmitError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="daily-checkin-page">
       <ProgressBar 
@@ -15,38 +96,75 @@ const DailyCheckInPage = () => {
       />
       
       <section className="questions-section">
-        <QuestionCard icon="bedtime" question="כמה שעות ישנת?">
+        <QuestionCard 
+          icon="bedtime" 
+          question="כמה שעות ישנת?"
+          error={missingFields.includes('sleep') ? "שדה חובה — בחר כדי להמשיך" : ""}
+        >
           <div className="grid-cols-2">
-            <PillButton label="פחות מ-5" />
-            <PillButton label="6—7" />
-            <PillButton label="7—8" selected />
-            <PillButton label="יותר מ-8" />
+            {sleepOptions.map(opt => (
+              <PillButton 
+                key={opt} 
+                label={opt} 
+                selected={sleepHours === opt} 
+                onClick={() => setSleepHours(opt)} 
+              />
+            ))}
           </div>
         </QuestionCard>
 
-        <QuestionCard icon="sentiment_satisfied" question="איך את מרגישה?">
+        <QuestionCard 
+          icon="sentiment_satisfied" 
+          question="איך את מרגישה?"
+          error={missingFields.includes('energy') ? "שדה חובה — בחר כדי להמשיך" : ""}
+        >
           <div className="flex-between">
-            <PillButton label="1" className="square-btn" />
-            <PillButton label="2" className="square-btn" />
-            <PillButton label="3" selected className="square-btn" />
-            <PillButton label="4" className="square-btn" />
-            <PillButton label="5" className="square-btn" />
+            {energyOptions.map(opt => (
+              <PillButton 
+                key={opt} 
+                label={opt} 
+                selected={energyLevel === opt} 
+                onClick={() => setEnergyLevel(opt)} 
+                className="square-btn" 
+              />
+            ))}
           </div>
         </QuestionCard>
 
         <QuestionCard 
           icon="schedule" 
           question="כמה זמן פנוי יש לך?" 
-          error="שדה חובה — בחר כדי להמשיך"
+          error={missingFields.includes('freeTime') ? "שדה חובה — בחר כדי להמשיך" : ""}
         >
           <div className="grid-cols-2">
-            <PillButton label="פחות מ-10" />
-            <PillButton label="10—20 דק'" />
-            <PillButton label="יותר משעה" className="col-span-2" />
+            <PillButton 
+              label="פחות מ-10" 
+              selected={freeTime === 'פחות מ-10'} 
+              onClick={() => setFreeTime('פחות מ-10')} 
+            />
+            <PillButton 
+              label="10—20 דק'" 
+              selected={freeTime === "10—20 דק'"} 
+              onClick={() => setFreeTime("10—20 דק'")} 
+            />
+            <PillButton 
+              label="יותר משעה" 
+              className="col-span-2" 
+              selected={freeTime === 'יותר משעה'} 
+              onClick={() => setFreeTime('יותר משעה')} 
+            />
           </div>
         </QuestionCard>
 
-        <button className="submit-btn">שלח ועבור למשימה</button>
+        {submitError && <div className="submit-error" style={{ color: 'var(--color-error)', backgroundColor: 'var(--color-error-container)', padding: 'var(--space-sm)', borderRadius: 'var(--radius-sm)', textAlign: 'center', marginBottom: 'var(--space-md)' }}>{submitError}</div>}
+        
+        <button 
+          className="submit-btn" 
+          onClick={handleSubmit} 
+          disabled={loading}
+        >
+          {loading ? 'שומר נתונים...' : 'שלח ועבור למשימה'}
+        </button>
       </section>
 
       <div className="decorative-illustration">

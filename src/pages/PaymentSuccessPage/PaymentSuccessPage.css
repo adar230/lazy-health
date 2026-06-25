@@ -1,0 +1,48 @@
+.payment-success-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 70vh;
+  text-align: center;
+  padding: var(--space-lg);
+}
+
+.success-icon {
+  font-size: 64px;
+  color: var(--color-primary);
+  margin-bottom: var(--space-md);
+}
+
+.error-icon {
+  font-size: 64px;
+  color: var(--color-error);
+  margin-bottom: var(--space-md);
+}
+
+.payment-success-page h2 {
+  font-size: 2rem;
+  color: var(--color-text);
+  margin-bottom: var(--space-sm);
+}
+
+.payment-success-page p {
+  color: var(--color-text-light);
+  font-size: 1.1rem;
+  margin-bottom: var(--space-md);
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-text-inverse);
+  padding: var(--space-sm) var(--space-lg);
+  border: none;
+  border-radius: var(--radius-full);
+  font-family: var(--font-primary);
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+}

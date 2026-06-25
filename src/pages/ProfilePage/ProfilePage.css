@@ -1,0 +1,164 @@
+.profile-page {
+  padding: var(--space-md);
+  max-width: 600px;
+  margin: 0 auto;
+  font-family: var(--font-family-sans);
+}
+
+.profile-page-title {
+  font-size: var(--font-headline-md-size);
+  color: var(--color-on-surface);
+  margin-bottom: var(--space-md);
+  text-align: center;
+}
+
+.profile-card {
+  background-color: var(--color-surface-container-lowest);
+  border-radius: var(--radius-xl);
+  padding: var(--space-lg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: var(--border-thin) solid var(--color-surface-container-highest);
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+  padding-bottom: var(--space-md);
+  border-bottom: var(--border-thin) solid var(--color-surface-container-highest);
+}
+
+.profile-avatar {
+  width: 64px;
+  height: 64px;
+  background-color: var(--color-primary-container);
+  color: var(--color-on-primary-container);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-headline-md-size);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-name {
+  font-size: var(--font-headline-sm-size);
+  color: var(--color-on-surface);
+  margin: 0 0 var(--space-xs) 0;
+}
+
+.profile-email {
+  font-size: var(--font-body-md-size);
+  color: var(--color-on-surface-variant);
+  margin: 0;
+}
+
+.subscription-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.subscription-title {
+  font-size: var(--font-label-md-size);
+  color: var(--color-on-surface-variant);
+  margin: 0 0 var(--space-sm) 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.premium-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  font-size: var(--font-body-md-size);
+  width: fit-content;
+}
+
+.free-status {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.free-badge {
+  display: inline-block;
+  background-color: var(--color-surface-container-high);
+  color: var(--color-on-surface-variant);
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font-size: var(--font-label-md-size);
+  width: fit-content;
+}
+
+.upgrade-prompt {
+  font-size: var(--font-body-md-size);
+  color: var(--color-on-surface-variant);
+  margin: 0 0 var(--space-sm) 0;
+}
+
+.upgrade-btn {
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+  padding: var(--space-sm) var(--space-md);
+  border: none;
+  border-radius: var(--radius-full);
+  font-family: var(--font-family-sans);
+  font-weight: 600;
+  font-size: var(--font-body-md-size);
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  width: 100%;
+  margin-top: var(--space-xs);
+}
+
+.upgrade-btn:hover {
+  background-color: var(--color-on-primary-fixed-variant);
+  transform: translateY(-2px);
+}
+
+.upgrade-btn:active {
+  transform: translateY(0);
+}
+
+.profile-avatar-img {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-full);
+  object-fit: cover;
+  border: var(--border-thin) solid var(--color-surface-container-highest);
+  flex-shrink: 0;
+}
+
+.checkout-error {
+  color: var(--color-error);
+  background-color: var(--color-error-container);
+  padding: var(--space-sm);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-label-md-size);
+  margin-top: var(--space-xs);
+  margin-bottom: var(--space-sm);
+}
+
+.premium-status {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.subscription-date {
+  font-size: var(--font-body-md-size);
+  color: var(--color-on-surface-variant);
+  margin: 0;
+}

@@ -7,7 +7,7 @@ const Footer = () => {
     { to: '/dashboard', icon: 'spa', label: 'Wellness' },
     { to: '/task', icon: 'fitness_center', label: 'Activity' },
     { to: '/checkin', icon: 'edit_note', label: 'Log' },
-    { to: '/login', icon: 'person', label: 'Profile' }
+    { to: '/profile', icon: 'person', label: 'Profile' }
   ];
 
   return (

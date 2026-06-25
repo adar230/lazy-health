@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../contexts/AuthContext';
 import './LoginPage.css';
 
 const LoginPage = () => {
@@ -8,7 +9,14 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    if (user) {
+      navigate('/checkin');
+    }
+  }, [user, navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -62,7 +70,7 @@ const LoginPage = () => {
             />
           </div>
           
-          <button type="submit" className="auth-submit-btn" disabled={loading} onClick={handleLogin}>
+          <button type="submit" className="auth-submit-btn" disabled={loading}>
             {loading ? 'מתחבר...' : 'התחבר'}
           </button>
         </form>
