@@ -1,65 +1,21 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../../lib/supabase';
-import { useAuth } from '../../contexts/AuthContext';
 import './PaymentSuccessPage.css';
 
 const PaymentSuccessPage = () => {
   const navigate = useNavigate();
-  const { user, loading } = useAuth();
   const [status, setStatus] = useState('processing');
-  const hasUpdated = useRef(false);
   
   useEffect(() => {
-    const updateSubscription = async () => {
-      // Prevent double updates in React Strict Mode
-      if (hasUpdated.current) return;
-      
-      if (loading) return; // Wait for auth to initialize
-      
-      if (!user) {
-        if (localStorage.getItem('pending_premium_upgrade')) {
-          navigate('/login', { state: { message: 'אנא התחבר כדי להשלים את השדרוג לפרימיום' } });
-        } else {
-          setStatus('error');
-        }
-        return;
-      }
-
-      hasUpdated.current = true;
-      localStorage.removeItem('pending_premium_upgrade');
-
-      try {
-        const now = new Date();
-        const nextMonth = new Date();
-        nextMonth.setMonth(now.getMonth() + 1);
-
-        // Upsert the subscription table to premium
-        const { error } = await supabase.from('subscriptions').upsert({
-          user_id: user.id,
-          type: 'premium',
-          start_date: now.toISOString(),
-          end_date: nextMonth.toISOString(),
-          is_active: true,
-          updated_at: now.toISOString()
-        });
-
-        if (error) throw error;
-        
-        setStatus('success');
-        
-        // Redirect to profile after a short delay
-        setTimeout(() => {
-          navigate('/profile');
-        }, 3000);
-      } catch (err) {
-        console.error('Error updating subscription:', err);
-        setStatus('error');
-      }
-    };
-
-    updateSubscription();
-  }, [user, loading, navigate]);
+    // Simply show success and redirect
+    setStatus('success');
+    
+    const timer = setTimeout(() => {
+      navigate('/profile?upgraded=true');
+    }, 3000);
+    
+    return () => clearTimeout(timer);
+  }, [navigate]);
 
   return (
     <div className="payment-success-page">

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import './ProfilePage.css';
@@ -7,6 +7,7 @@ import './ProfilePage.css';
 const ProfilePage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [subscriptionData, setSubscriptionData] = useState(null);
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -21,6 +22,26 @@ const ProfilePage = () => {
       }
       
       try {
+        // Check if we need to apply a pending upgrade
+        if (searchParams.get('upgraded') === 'true') {
+          const now = new Date();
+          const nextMonth = new Date();
+          nextMonth.setMonth(now.getMonth() + 1);
+          
+          await supabase.from('subscriptions').upsert({
+            user_id: user.id,
+            type: 'premium',
+            start_date: now.toISOString(),
+            end_date: nextMonth.toISOString(),
+            is_active: true,
+            updated_at: now.toISOString()
+          });
+          
+          // Clean up the URL to prevent re-triggering on refresh
+          searchParams.delete('upgraded');
+          setSearchParams(searchParams, { replace: true });
+        }
+
         const [profileRes, subRes] = await Promise.all([
           supabase.from('profiles').select('name, profile_image_url').eq('user_id', user.id).single(),
           supabase.from('subscriptions').select('type, start_date, end_date, is_active').eq('user_id', user.id).single()
@@ -40,7 +61,7 @@ const ProfilePage = () => {
     };
 
     fetchProfileData();
-  }, [user]);
+  }, [user, searchParams, setSearchParams]);
 
   const handleUpgrade = () => {
     console.log("Upgrade button clicked");
