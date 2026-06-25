@@ -28,14 +28,18 @@ const ProfilePage = () => {
           const nextMonth = new Date();
           nextMonth.setMonth(now.getMonth() + 1);
           
-          await supabase.from('subscriptions').upsert({
+          const { error } = await supabase.from('subscriptions').upsert({
             user_id: user.id,
             type: 'premium',
             start_date: now.toISOString(),
             end_date: nextMonth.toISOString(),
             is_active: true,
             updated_at: now.toISOString()
-          });
+          }, { onConflict: 'user_id' }).select();
+          
+          if (error) {
+            console.error("Supabase Upsert Error:", error);
+          }
           
           // Clean up the URL to prevent re-triggering on refresh
           searchParams.delete('upgraded');
