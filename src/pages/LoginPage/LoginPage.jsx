@@ -1,20 +1,25 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import './LoginPage.css';
 
 const LoginPage = () => {
+  const location = useLocation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [error, setError] = useState(location.state?.message || '');
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
 
   React.useEffect(() => {
     if (user) {
-      navigate('/checkin');
+      if (localStorage.getItem('pending_premium_upgrade')) {
+        navigate('/payment-success');
+      } else {
+        navigate('/checkin');
+      }
     }
   }, [user, navigate]);
 
@@ -31,7 +36,11 @@ const LoginPage = () => {
 
       if (error) throw error;
       
-      navigate('/checkin');
+      if (localStorage.getItem('pending_premium_upgrade')) {
+        navigate('/payment-success');
+      } else {
+        navigate('/checkin');
+      }
     } catch (err) {
       setError(err.message);
     } finally {

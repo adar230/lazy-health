@@ -68,6 +68,7 @@ const ProfilePage = () => {
       }
       
       console.log("Redirecting to URL:", url.toString());
+      localStorage.setItem('pending_premium_upgrade', 'true');
       window.location.href = url.toString();
     } catch (err) {
       console.error("Error creating redirect URL:", err);

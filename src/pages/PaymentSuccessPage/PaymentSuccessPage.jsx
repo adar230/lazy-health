@@ -6,7 +6,7 @@ import './PaymentSuccessPage.css';
 
 const PaymentSuccessPage = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const [status, setStatus] = useState('processing');
   const hasUpdated = useRef(false);
   
@@ -15,13 +15,19 @@ const PaymentSuccessPage = () => {
       // Prevent double updates in React Strict Mode
       if (hasUpdated.current) return;
       
+      if (loading) return; // Wait for auth to initialize
+      
       if (!user) {
-        // If user is null, they might be loading auth state. We'll wait until user is populated.
-        // If they stay null, it will error out eventually if they aren't logged in.
+        if (localStorage.getItem('pending_premium_upgrade')) {
+          navigate('/login', { state: { message: 'אנא התחבר כדי להשלים את השדרוג לפרימיום' } });
+        } else {
+          setStatus('error');
+        }
         return;
       }
 
       hasUpdated.current = true;
+      localStorage.removeItem('pending_premium_upgrade');
 
       try {
         const now = new Date();
@@ -53,7 +59,7 @@ const PaymentSuccessPage = () => {
     };
 
     updateSubscription();
-  }, [user, navigate]);
+  }, [user, loading, navigate]);
 
   return (
     <div className="payment-success-page">
