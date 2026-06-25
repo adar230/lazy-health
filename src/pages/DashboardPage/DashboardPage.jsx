@@ -60,10 +60,8 @@ const DashboardPage = () => {
       <div className={`premium-content-wrapper ${!isPremium ? 'locked' : ''}`}>
         {!isPremium && (
           <div className="premium-overlay">
-            <span className="material-symbols-rounded lock-icon">lock</span>
-            <h3>תוכן לחברי פרימיום בלבד</h3>
-            <p>שדרגו עכשיו כדי לפתוח גרפים שבועיים, תובנות בינה מלאכותית ועוד.</p>
-            <button className="premium-upgrade-btn" onClick={() => navigate('/profile')}>שדרגו לפרימיום</button>
+            <h3>תוכן זה זמין למנויי פרימיום</h3>
+            <button className="premium-upgrade-btn" onClick={() => navigate('/profile')}>שדרגו לפרימיום ←</button>
           </div>
         )}
         <div className="premium-content-inner">
