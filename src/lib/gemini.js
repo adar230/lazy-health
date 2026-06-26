@@ -21,7 +21,7 @@ export const generateDailyTask = async (sleepHours, energyLevel, freeTime) => {
         'X-Title': 'Lazy Health'
       },
       body: JSON.stringify({
-        model: 'mistralai/mistral-7b-instruct:free',
+        model: 'google/gemma-4-31b-it:free',
         messages: [
           { role: 'user', content: prompt }
         ]
@@ -94,7 +94,7 @@ export const generateMinimalTask = async (sleepHours, energyLevel, freeTime) => 
         'X-Title': 'Lazy Health'
       },
       body: JSON.stringify({
-        model: 'mistralai/mistral-7b-instruct:free',
+        model: 'google/gemma-4-31b-it:free',
         messages: [
           { role: 'user', content: prompt }
         ]
