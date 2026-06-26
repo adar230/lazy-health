@@ -38,6 +38,9 @@ const DailyTaskPage = () => {
 
         if (taskData) {
           setTask(taskData);
+          if (taskData.is_completed) {
+            setIsCompletingMain(true);
+          }
           
           // Fetch free time from the associated checkin
           if (taskData.checkin_id) {
@@ -61,6 +64,9 @@ const DailyTaskPage = () => {
               
             if (minimalData) {
               setTask(prev => ({ ...prev, minimalTask: minimalData }));
+              if (minimalData.is_completed) {
+                setIsCompletingMinimal(true);
+              }
             }
           }
         }
