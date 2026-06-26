@@ -22,6 +22,7 @@ const DailyCheckInPage = () => {
   // Flow state
   const [checkinType, setCheckinType] = useState('none');
   const [isCompleted, setIsCompleted] = useState(false);
+  const [isAlreadyCompleted, setIsAlreadyCompleted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [missingFields, setMissingFields] = useState([]);
@@ -30,16 +31,32 @@ const DailyCheckInPage = () => {
   const { user } = useAuth();
 
   useEffect(() => {
+    const fetchExistingCheckin = async (type) => {
+      if (!user) return;
+      const today = new Date().toISOString().split('T')[0];
+      const { data } = await supabase
+        .from('daily_checkins')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('date', today)
+        .eq('checkin_type', type)
+        .single();
+      
+      if (data) setIsAlreadyCompleted(true);
+    };
+
     const hour = new Date().getHours();
-    // Morning: 5:00 - 11:59 (since 12:00 isn't technically morning for this prompt)
+    // Morning: 5:00 - 11:59
     if (hour >= 5 && hour < 12) {
       setCheckinType('morning');
+      fetchExistingCheckin('morning');
     } else if (hour >= 17 && hour < 23) {
       setCheckinType('evening');
+      fetchExistingCheckin('evening');
     } else {
       setCheckinType('none');
     }
-  }, []);
+  }, [user]);
 
   const sleepOptions = ['פחות מ-5', '5—6', '6—7', '7—8', 'יותר מ-8'];
   const energyOptions = ['1', '2', '3', '4', '5'];
@@ -171,6 +188,23 @@ const DailyCheckInPage = () => {
         <div style={{ textAlign: 'center', marginTop: '4rem', padding: '2rem' }}>
           <h2>השאלון סגור כרגע</h2>
           <p style={{ marginTop: '1rem', color: 'var(--color-text-secondary)' }}>השאלון זמין בבוקר (5:00-12:00) ובערב (17:00-23:00)</p>
+          <button className="submit-btn" onClick={() => navigate('/dashboard')} style={{ marginTop: '2rem' }}>חזרה לבית</button>
+        </div>
+      </div>
+    );
+  }
+
+  if (isAlreadyCompleted) {
+    const isMorning = checkinType === 'morning';
+    return (
+      <div className="daily-checkin-page">
+        <div style={{ textAlign: 'center', marginTop: '4rem', padding: '2rem' }}>
+          <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: 'var(--color-primary)' }}>
+            השאלון של ה{isMorning ? 'בוקר' : 'ערב'} כבר הושלם.
+          </h2>
+          <p style={{ color: 'var(--color-text-secondary)' }}>
+            נתראה ה{isMorning ? 'ערב' : 'מחר בבוקר'} 🌿
+          </p>
           <button className="submit-btn" onClick={() => navigate('/dashboard')} style={{ marginTop: '2rem' }}>חזרה לבית</button>
         </div>
       </div>

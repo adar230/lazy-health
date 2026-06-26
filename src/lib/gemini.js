@@ -91,9 +91,9 @@ const callOpenRouterWithRetry = async (prompt) => {
 export const generateDailyTask = async (type, data) => {
   let prompt = '';
   if (type === 'morning') {
-    prompt = `המשתמש ישן ${data.sleepHours || 7} שעות, רמת האנרגיה שלו היא ${data.energyLevel || 3} מתוך 5. צור משימה בריאותית אחת קצרה ומותאמת אישית בעברית לבוקר. החזר JSON בלבד עם השדות: title, description, category (שינה/תזונה/שתייה/פעילות/אורח חיים), difficulty (קל/בינוני).`;
+    prompt = `המשתמש ישן ${data.sleepHours || 7} שעות, רמת האנרגיה שלו היא ${data.energyLevel || 3} מתוך 5. צור משימה בריאותית אחת קצרה ומותאמת אישית בעברית לבוקר. vary the task type, do not always suggest walking or breathing exercises. Include variety like: nutrition tasks (prepare a healthy meal, eat vegetables, cook something), hydration, sleep hygiene, mental wellness (breathing, meditation, journaling), social wellness, screen time reduction, stretching, cooking. החזר JSON בלבד עם השדות: title, description, category (שינה/תזונה/שתייה/פעילות/אורח חיים), difficulty (קל/בינוני).`;
   } else {
-    prompt = `המשתמש שתה ${data.waterGlasses || 5} כוסות מים, אכל בריא: ${data.ateHealthy ? 'כן' : 'לא'}, והיה פעיל היום: ${data.wasActive ? 'כן' : 'לא'}, ויש לו ${data.freeTime || 15} דקות פנויות. צור משימה בריאותית אחת קצרה ומותאמת אישית בעברית לערב. החזר JSON בלבד עם השדות: title, description, category (שינה/תזונה/שתייה/פעילות/אורח חיים), difficulty (קל/בינוני).`;
+    prompt = `המשתמש שתה ${data.waterGlasses || 5} כוסות מים, אכל בריא: ${data.ateHealthy ? 'כן' : 'לא'}, והיה פעיל היום: ${data.wasActive ? 'כן' : 'לא'}, ויש לו ${data.freeTime || 15} דקות פנויות. צור משימה בריאותית אחת קצרה ומותאמת אישית בעברית לערב. vary the task type, do not always suggest walking or breathing exercises. Include variety like: nutrition tasks (prepare a healthy meal, eat vegetables, cook something), hydration, sleep hygiene, mental wellness (breathing, meditation, journaling), social wellness, screen time reduction, stretching, cooking. החזר JSON בלבד עם השדות: title, description, category (שינה/תזונה/שתייה/פעילות/אורח חיים), difficulty (קל/בינוני).`;
   }
   return callOpenRouterWithRetry(prompt);
 };
@@ -101,9 +101,9 @@ export const generateDailyTask = async (type, data) => {
 export const generateMinimalTask = async (type, data) => {
   let prompt = '';
   if (type === 'morning') {
-    prompt = `המשתמש ישן ${data.sleepHours || 7} שעות, רמת האנרגיה שלו היא ${data.energyLevel || 3} מתוך 5. צור משימה בריאותית מינימלית אחת קטנה וקלילה בעברית לבוקר שלוקחת פחות מ-5 דקות. המשימה חייבת להיות קלה מאוד. החזר JSON בלבד עם השדות: title, description, category (שינה/תזונה/שתייה/פעילות/אורח חיים), difficulty (קל).`;
+    prompt = `המשתמש ישן ${data.sleepHours || 7} שעות, רמת האנרגיה שלו היא ${data.energyLevel || 3} מתוך 5. צור משימה בריאותית מינימלית אחת קטנה וקלילה בעברית לבוקר שלוקחת פחות מ-5 דקות. המשימה חייבת להיות קלה מאוד. vary the task type, do not always suggest walking or breathing exercises. Include variety like: nutrition tasks, hydration, sleep hygiene, mental wellness, stretching. החזר JSON בלבד עם השדות: title, description, category (שינה/תזונה/שתייה/פעילות/אורח חיים), difficulty (קל).`;
   } else {
-    prompt = `המשתמש שתה ${data.waterGlasses || 5} כוסות מים, אכל בריא: ${data.ateHealthy ? 'כן' : 'לא'}, והיה פעיל היום: ${data.wasActive ? 'כן' : 'לא'}, ויש לו ${data.freeTime || 15} דקות פנויות. צור משימה בריאותית מינימלית אחת קטנה וקלילה בעברית לערב שלוקחת פחות מ-5 דקות. המשימה חייבת להיות קלה מאוד. החזר JSON בלבד עם השדות: title, description, category (שינה/תזונה/שתייה/פעילות/אורח חיים), difficulty (קל).`;
+    prompt = `המשתמש שתה ${data.waterGlasses || 5} כוסות מים, אכל בריא: ${data.ateHealthy ? 'כן' : 'לא'}, והיה פעיל היום: ${data.wasActive ? 'כן' : 'לא'}, ויש לו ${data.freeTime || 15} דקות פנויות. צור משימה בריאותית מינימלית אחת קטנה וקלילה בעברית לערב שלוקחת פחות מ-5 דקות. המשימה חייבת להיות קלה מאוד. vary the task type, do not always suggest walking or breathing exercises. Include variety like: nutrition tasks, hydration, sleep hygiene, mental wellness, stretching. החזר JSON בלבד עם השדות: title, description, category (שינה/תזונה/שתייה/פעילות/אורח חיים), difficulty (קל).`;
   }
   return callOpenRouterWithRetry(prompt);
 };

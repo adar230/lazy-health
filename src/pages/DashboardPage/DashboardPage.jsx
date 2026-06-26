@@ -13,6 +13,7 @@ const DashboardPage = () => {
   const navigate = useNavigate();
   const [subType, setSubType] = useState('free');
   const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({ avgSleep: "0", avgEnergy: "0", streak: 0, chartData: [], checkinCount: 0 });
 
   useEffect(() => {
     const fetchSubscription = async () => {
@@ -21,17 +22,99 @@ const DashboardPage = () => {
         return;
       }
       try {
-        const { data, error } = await supabase
+        const { data: subData } = await supabase
           .from('subscriptions')
           .select('type, is_active')
           .eq('user_id', user.id)
           .single();
         
-        if (data && data.is_active) {
-          setSubType(data.type);
+        if (subData && subData.is_active) {
+          setSubType(subData.type);
+        }
+
+        const { data: checkinData } = await supabase
+          .from('daily_checkins')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('date', { ascending: false })
+          .limit(20);
+
+        if (checkinData && checkinData.length > 0) {
+          const uniqueDates = [...new Set(checkinData.map(d => d.date))].sort((a,b) => b.localeCompare(a));
+          
+          // Streak calc
+          let currentStreak = 0;
+          const today = new Date();
+          const yesterday = new Date(today);
+          yesterday.setDate(yesterday.getDate() - 1);
+          
+          const todayStr = today.toISOString().split('T')[0];
+          const yesterdayStr = yesterday.toISOString().split('T')[0];
+          
+          let expectedDate = new Date();
+          if (uniqueDates[0] === todayStr) {
+            // Checked in today
+          } else if (uniqueDates[0] === yesterdayStr) {
+            expectedDate = yesterday; // Checked in yesterday
+          } else {
+            expectedDate = null; // Missed yesterday and today
+          }
+
+          if (expectedDate) {
+            for (const dStr of uniqueDates) {
+              const expStr = expectedDate.toISOString().split('T')[0];
+              if (dStr === expStr) {
+                currentStreak++;
+                expectedDate.setDate(expectedDate.getDate() - 1);
+              } else {
+                break;
+              }
+            }
+          }
+
+          // Averages
+          let sleepSum = 0;
+          let sleepCount = 0;
+          let energySum = 0;
+          let energyCount = 0;
+          
+          checkinData.forEach(d => {
+            if (d.sleep_hours) { sleepSum += d.sleep_hours; sleepCount++; }
+            if (d.energy_level) { energySum += d.energy_level; energyCount++; }
+          });
+          
+          const avgSleep = sleepCount > 0 ? (sleepSum / sleepCount).toFixed(1) : "0";
+          const avgEnergy = energyCount > 0 ? (energySum / energyCount).toFixed(1) : "0";
+
+          // Chart data (last 7 days ascending)
+          const chartDates = uniqueDates.slice(0, 7).reverse();
+          const daysHe = ["א'", "ב'", "ג'", "ד'", "ה'", "ו'", "ש'"];
+          
+          const chartDataMapped = chartDates.map(dStr => {
+            const dayRecords = checkinData.filter(d => d.date === dStr);
+            const sleep = dayRecords.find(d => d.sleep_hours)?.sleep_hours || 0;
+            const energy = dayRecords.find(d => d.energy_level)?.energy_level || 0;
+            
+            const dObj = new Date(dStr);
+            const dayName = daysHe[dObj.getDay()];
+
+            return {
+              day: dayName,
+              sleep: Math.min((sleep / 10) * 100, 100),
+              energy: Math.min((energy / 5) * 100, 100)
+            };
+          });
+
+          setStats({ 
+            avgSleep, 
+            avgEnergy, 
+            streak: currentStreak, 
+            chartData: chartDataMapped, 
+            checkinCount: uniqueDates.length 
+          });
         }
       } catch (err) {
-        console.error('Error fetching subscription in dashboard:', err);
+        console.error('Error fetching data in dashboard:', err);
       } finally {
         setLoading(false);
       }
@@ -52,9 +135,9 @@ const DashboardPage = () => {
       </section>
 
       <section className="stats-grid">
-        <StatCard icon="edit_note" number="5/7" label="משימות" />
-        <StatCard icon="spa" number="6.8" label="שעות שינה" />
-        <StatCard icon="fitness_center" number="7" label="ימים ברצף" />
+        <StatCard icon="bolt" number={stats.avgEnergy} label="אנרגיה ממוצעת" />
+        <StatCard icon="spa" number={stats.avgSleep} label="שעות שינה" />
+        <StatCard icon="fitness_center" number={stats.streak.toString()} label="ימים ברצף" />
       </section>
 
       <div className={`premium-content-wrapper ${!isPremium ? 'locked' : ''}`}>
@@ -65,20 +148,24 @@ const DashboardPage = () => {
           </div>
         )}
         <div className="premium-content-inner">
-          <WeeklyChart />
+          {stats.checkinCount < 3 ? (
+            <EmptyState 
+              icon="pending_actions"
+              title="עדיין אין מספיק נתונים"
+              description="מלאי עוד כמה שאלונים יומיים כדי שנוכל להציג את הגרף והתובנות."
+              buttonText="מלאי שאלון עכשיו"
+            />
+          ) : (
+            <>
+              <WeeklyChart data={stats.chartData} />
 
-          <InsightCard 
-            icon="lightbulb"
-            title="שינה ואנרגיה קשורות אצלך"
-            description="בימים שישנת מעל 7 שעות, האנרגיה הייתה גבוהה ב-40%."
-          />
-
-          <EmptyState 
-            icon="pending_actions"
-            title="עדיין אין מספיק נתונים"
-            description="מלאי עוד כמה שאלונים יומיים לתובנות מעמיקות יותר."
-            buttonText="מלאי שאלון עכשיו"
-          />
+              <InsightCard 
+                icon="lightbulb"
+                title="השינה שלך משפיעה עליך"
+                description={`בממוצע ישנת ${stats.avgSleep} שעות. נראה שבימים עם שינה טובה, רמת האנרגיה עולה!`}
+              />
+            </>
+          )}
         </div>
       </div>
     </div>

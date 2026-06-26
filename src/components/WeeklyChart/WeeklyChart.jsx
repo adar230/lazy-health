@@ -1,8 +1,8 @@
 import React from 'react';
 import './WeeklyChart.css';
 
-const WeeklyChart = () => {
-  const chartData = [
+const WeeklyChart = ({ data }) => {
+  const chartData = data || [
     { day: "א'", sleep: 60, energy: 40 },
     { day: "ב'", sleep: 75, energy: 55 },
     { day: "ג'", sleep: 90, energy: 80 },
