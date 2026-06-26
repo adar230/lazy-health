@@ -1,7 +1,6 @@
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
 const MODELS = [
-  'google/gemma-4-31b-it:free',
   'nvidia/nemotron-3-ultra-550b-a55b:free',
   'cohere/north-mini-code:free'
 ];

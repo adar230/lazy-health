@@ -40,7 +40,7 @@ const DailyCheckInPage = () => {
         .eq('user_id', user.id)
         .eq('date', today)
         .eq('checkin_type', type)
-        .single();
+        .maybeSingle();
       
       if (data) setIsAlreadyCompleted(true);
     };
