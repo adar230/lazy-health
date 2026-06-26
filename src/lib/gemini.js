@@ -21,7 +21,7 @@ export const generateDailyTask = async (sleepHours, energyLevel, freeTime) => {
         'X-Title': 'Lazy Health'
       },
       body: JSON.stringify({
-        model: 'google/gemini-flash-1.5-8b',
+        model: 'nvidia/nemotron-3-ultra-550b-a55b:free',
         messages: [
           { role: 'user', content: prompt }
         ]
