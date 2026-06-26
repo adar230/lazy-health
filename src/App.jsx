@@ -1,6 +1,7 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout/Layout';
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import LandingPage from './pages/LandingPage/LandingPage';
 import DailyCheckInPage from './pages/DailyCheckInPage/DailyCheckInPage';
 import DailyTaskPage from './pages/DailyTaskPage/DailyTaskPage';
@@ -14,14 +15,20 @@ function App() {
   return (
     <Routes>
       <Route element={<Layout />}>
+        {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/checkin" element={<DailyCheckInPage />} />
-        <Route path="/task" element={<DailyTaskPage />} />
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/payment-success" element={<PaymentSuccessPage />} />
+        
+        {/* Protected Routes */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/checkin" element={<DailyCheckInPage />} />
+          <Route path="/task" element={<DailyTaskPage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/payment-success" element={<PaymentSuccessPage />} />
+        </Route>
+
         <Route path="*" element={<LandingPage />} />
       </Route>
     </Routes>
