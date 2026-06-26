@@ -15,7 +15,8 @@ const DashboardPage = () => {
   const navigate = useNavigate();
   const [subType, setSubType] = useState('free');
   const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState({ avgSleep: "0", avgEnergy: "0", streak: 0, chartData: [], checkinCount: 0, completionRate: "0%" });
+  const [chartRange, setChartRange] = useState('week');
+  const [stats, setStats] = useState({ avgSleep: "0", avgEnergy: "0", streak: 0, rawData: [], uniqueDates: [], checkinCount: 0, completionRate: "0%" });
   const [aiInsights, setAiInsights] = useState(null);
   const [loadingInsights, setLoadingInsights] = useState(false);
 
@@ -41,7 +42,7 @@ const DashboardPage = () => {
           .select('*')
           .eq('user_id', user.id)
           .order('date', { ascending: false })
-          .limit(20);
+          .limit(40);
 
         console.log("--- Dashboard Debug ---");
         console.log("1. User ID used for query:", user?.id);
@@ -133,30 +134,12 @@ const DashboardPage = () => {
             console.error("Failed to calc completion rate", e);
           }
 
-          // Chart data (last 7 days ascending)
-          const chartDates = uniqueDates.slice(0, 7).reverse();
-          const daysHe = ["א'", "ב'", "ג'", "ד'", "ה'", "ו'", "ש'"];
-          
-          const chartDataMapped = chartDates.map(dStr => {
-            const dayRecords = checkinData.filter(d => d.date === dStr);
-            const sleep = dayRecords.find(d => d.sleep_hours)?.sleep_hours || 0;
-            const energy = dayRecords.find(d => d.energy_level)?.energy_level || 0;
-            
-            const dObj = new Date(dStr);
-            const dayName = daysHe[dObj.getDay()];
-
-            return {
-              day: dayName,
-              sleep: Math.min((sleep / 10) * 100, 100),
-              energy: Math.min((energy / 5) * 100, 100)
-            };
-          });
-
           setStats({ 
             avgSleep, 
             avgEnergy, 
             streak: currentStreak, 
-            chartData: chartDataMapped, 
+            rawData: checkinData,
+            uniqueDates: uniqueDates,
             checkinCount: checkinData.length,
             completionRate
           });
@@ -202,6 +185,35 @@ const DashboardPage = () => {
   if (loading) return <div className="loading">טוען נתונים...</div>;
 
   const isPremium = subType === 'premium';
+  
+  const getChartData = () => {
+    if (!stats.uniqueDates || stats.uniqueDates.length === 0) return [];
+    
+    const count = chartRange === 'week' ? 7 : 30;
+    const chartDates = stats.uniqueDates.slice(0, count).reverse();
+    const daysHe = ["א'", "ב'", "ג'", "ד'", "ה'", "ו'", "ש'"];
+    
+    return chartDates.map(dStr => {
+      const dayRecords = stats.rawData.filter(d => d.date === dStr);
+      const sleep = dayRecords.find(d => d.sleep_hours)?.sleep_hours || 0;
+      const energy = dayRecords.find(d => d.energy_level)?.energy_level || 0;
+      
+      const dObj = new Date(dStr);
+      
+      let label = daysHe[dObj.getDay()];
+      if (chartRange === 'month') {
+        label = `${dObj.getDate()}/${dObj.getMonth() + 1}`;
+      }
+
+      return {
+        day: label,
+        sleep: Math.min((sleep / 10) * 100, 100),
+        energy: Math.min((energy / 5) * 100, 100)
+      };
+    });
+  };
+
+  const chartData = getChartData();
 
   return (
     <div className="dashboard-page">
@@ -235,9 +247,36 @@ const DashboardPage = () => {
             />
           ) : (
             <>
-              <WeeklyChart data={stats.chartData} />
+              <div className="dashboard-chart-filters" style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginBottom: '1rem' }}>
+                <button 
+                  className={`filter-btn ${chartRange === 'month' ? 'active' : ''}`}
+                  onClick={() => setChartRange('month')}
+                  style={{
+                    padding: '0.4rem 1rem', borderRadius: '20px', border: '1px solid var(--color-primary-light)',
+                    background: chartRange === 'month' ? 'var(--color-primary-light)' : 'transparent',
+                    color: chartRange === 'month' ? 'var(--color-primary)' : 'var(--color-text-secondary)',
+                    cursor: 'pointer', fontWeight: '500', transition: 'all 0.2s ease'
+                  }}
+                >
+                  חודש
+                </button>
+                <button 
+                  className={`filter-btn ${chartRange === 'week' ? 'active' : ''}`}
+                  onClick={() => setChartRange('week')}
+                  style={{
+                    padding: '0.4rem 1rem', borderRadius: '20px', border: '1px solid var(--color-primary-light)',
+                    background: chartRange === 'week' ? 'var(--color-primary-light)' : 'transparent',
+                    color: chartRange === 'week' ? 'var(--color-primary)' : 'var(--color-text-secondary)',
+                    cursor: 'pointer', fontWeight: '500', transition: 'all 0.2s ease'
+                  }}
+                >
+                  שבוע
+                </button>
+              </div>
+
+              <WeeklyChart data={chartData} />
               
-              <MoodChart data={stats.chartData} />
+              <MoodChart data={chartData} />
 
               <div style={{ marginTop: '1.5rem' }}>
                 {loadingInsights ? (

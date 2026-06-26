@@ -16,10 +16,6 @@ const WeeklyChart = ({ data }) => {
     <section className="weekly-chart-card">
       <div className="chart-header">
         <h3 className="chart-title">אנרגיה VS שינה</h3>
-        <div className="chart-filters">
-          <button className="filter-btn">חודש</button>
-          <button className="filter-btn active">שבוע</button>
-        </div>
       </div>
       
       <div className="chart-body">

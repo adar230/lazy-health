@@ -110,6 +110,6 @@ export const generateMinimalTask = async (type, data, mainTaskTitle = '') => {
 };
 
 export const generateDashboardInsights = async (statsText) => {
-  const prompt = `Here is the user's health check-in data for the last week:\n${statsText}\nProvide 3 short, personalized, encouraging insights in Hebrew about their health patterns. Return a JSON array of strings: ["insight 1", "insight 2", "insight 3"]. Return ONLY the JSON array.`;
+  const prompt = `You are an expert health analyst. Here is the user's actual checkin data for the last 7 days:\n${statsText}\nAnalyze the EXACT numbers provided. Do not give generic tips. Give 3 personalized insights based on real patterns in the data (e.g., 'בשבוע האחרון ישנת ממוצע 6.9 שעות - זה טוב! אבל ביומיים האחרונים האנרגיה ירדה ל-2, כדאי לבדוק אם יש קשר לשינה'). Return a JSON array of strings in Hebrew: ["insight 1", "insight 2", "insight 3"]. Return ONLY the JSON array.`;
   return callOpenRouterWithRetry(prompt);
 };
