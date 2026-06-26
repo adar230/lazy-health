@@ -21,7 +21,12 @@ export const AuthProvider = ({ children }) => {
     });
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_OUT') {
+        // Prevent state updates on sign out to avoid flashing route redirects
+        // The logout handler in ProfilePage will force a hard page reload.
+        return;
+      }
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
