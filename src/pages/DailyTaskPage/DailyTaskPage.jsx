@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import TaskCard from '../../components/TaskCard/TaskCard';
 import FallbackTaskCard from '../../components/FallbackTaskCard/FallbackTaskCard';
 import MotivationalSection from '../../components/MotivationalSection/MotivationalSection';
@@ -8,8 +9,10 @@ import './DailyTaskPage.css';
 
 const DailyTaskPage = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [task, setTask] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showMinimal, setShowMinimal] = useState(false);
 
   useEffect(() => {
     const fetchLatestTask = async () => {
@@ -99,6 +102,35 @@ const DailyTaskPage = () => {
   if (taskCategory.includes('שתייה') || taskCategory.includes('מים')) catIcon = "water_drop";
   if (taskCategory.includes('חיים') || taskCategory.includes('נפש') || taskCategory.includes('מיינדפולנס')) catIcon = "self_improvement";
 
+  // Handlers
+  const handleCompleteMain = async () => {
+    if (!task) return;
+    try {
+      await supabase.from('tasks').update({ is_completed: true }).eq('id', task.id);
+      navigate('/dashboard');
+    } catch (err) {
+      console.error('Failed to complete main task', err);
+    }
+  };
+
+  const handleCompleteMinimal = async () => {
+    if (!task?.minimalTask) {
+      // Fallback if no minimal task found in DB
+      navigate('/dashboard');
+      return;
+    }
+    try {
+      await supabase.from('tasks').update({ is_completed: true }).eq('id', task.minimalTask.id);
+      navigate('/dashboard');
+    } catch (err) {
+      console.error('Failed to complete minimal task', err);
+    }
+  };
+
+  const handleSkip = () => {
+    setShowMinimal(true);
+  };
+
   return (
     <div className="daily-task-page">
       <section className="task-page-header">
@@ -112,19 +144,24 @@ const DailyTaskPage = () => {
         </div>
       </section>
 
-      <TaskCard 
-        icon={catIcon}
-        title={taskTitle}
-        description={taskDesc}
-        categoryIcon={catIcon}
-        categoryName={taskCategory}
-      />
+      {!showMinimal && (
+        <TaskCard 
+          icon={catIcon}
+          title={taskTitle}
+          description={taskDesc}
+          categoryIcon={catIcon}
+          categoryName={taskCategory}
+          onComplete={handleCompleteMain}
+          onSkip={handleSkip}
+        />
+      )}
 
       <FallbackTaskCard 
         icon="water_drop"
         label={task?.minimalTask?.title || "משימה מינימלית חלופית"}
         description={task?.minimalTask?.description || "שתי כוס מים עכשיו. זה הכל. גם זה נחשב."}
         buttonText="גם את זה עשיתי"
+        onComplete={handleCompleteMinimal}
       />
 
       <MotivationalSection 

@@ -1,7 +1,7 @@
 import React from 'react';
 import './FallbackTaskCard.css';
 
-const FallbackTaskCard = ({ icon, label, description, buttonText }) => {
+const FallbackTaskCard = ({ icon, label, description, buttonText, onComplete }) => {
   return (
     <section className="fallback-card">
       <div className="fallback-header">
@@ -13,7 +13,7 @@ const FallbackTaskCard = ({ icon, label, description, buttonText }) => {
       <div className="fallback-content">
         <p className="fallback-desc">{description}</p>
       </div>
-      <button className="fallback-btn">{buttonText}</button>
+      <button className="fallback-btn" onClick={onComplete}>{buttonText}</button>
     </section>
   );
 };
