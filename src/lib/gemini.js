@@ -37,6 +37,13 @@ export const generateDailyTask = async (sleepHours, energyLevel, freeTime) => {
     }
 
     const data = await response.json();
+    
+    console.log('--- OpenRouter Debug Info ---');
+    console.log('Status Code:', response.status);
+    console.log('Headers:', Object.fromEntries(response.headers.entries()));
+    console.log('Full JSON Response:', JSON.stringify(data, null, 2));
+    console.log('---------------------------');
+
     const textContent = data.choices?.[0]?.message?.content;
     
     if (!textContent) {
