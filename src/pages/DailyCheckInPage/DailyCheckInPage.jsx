@@ -33,14 +33,27 @@ const DailyCheckInPage = () => {
   useEffect(() => {
     const fetchExistingCheckin = async (type) => {
       if (!user) return;
-      const today = new Date().toISOString().split('T')[0];
-      const { data } = await supabase
+      
+      // Use local date to match DB insertion behavior reliably
+      const tzOffset = new Date().getTimezoneOffset() * 60000;
+      const today = new Date(Date.now() - tzOffset).toISOString().split('T')[0];
+      
+      console.log("--- Lock Check Debug ---");
+      console.log("Querying for user_id:", user.id);
+      console.log("Date:", today);
+      console.log("Checkin Type:", type);
+
+      const { data, error } = await supabase
         .from('daily_checkins')
         .select('id')
         .eq('user_id', user.id)
         .eq('date', today)
         .eq('checkin_type', type)
         .maybeSingle();
+      
+      console.log("Lock Query Result Data:", data);
+      console.log("Lock Query Error:", error);
+      console.log("------------------------");
       
       if (data) setIsAlreadyCompleted(true);
     };

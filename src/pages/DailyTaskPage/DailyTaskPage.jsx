@@ -13,6 +13,8 @@ const DailyTaskPage = () => {
   const [task, setTask] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showMinimal, setShowMinimal] = useState(false);
+  const [isCompletingMain, setIsCompletingMain] = useState(false);
+  const [isCompletingMinimal, setIsCompletingMinimal] = useState(false);
 
   useEffect(() => {
     const fetchLatestTask = async () => {
@@ -104,26 +106,29 @@ const DailyTaskPage = () => {
 
   // Handlers
   const handleCompleteMain = async () => {
-    if (!task) return;
+    if (!task || isCompletingMain) return;
+    setIsCompletingMain(true);
     try {
       await supabase.from('tasks').update({ is_completed: true }).eq('id', task.id);
-      navigate('/dashboard');
+      setTimeout(() => navigate('/dashboard'), 800);
     } catch (err) {
       console.error('Failed to complete main task', err);
+      setIsCompletingMain(false);
     }
   };
 
   const handleCompleteMinimal = async () => {
-    if (!task?.minimalTask) {
-      // Fallback if no minimal task found in DB
-      navigate('/dashboard');
+    if (!task?.minimalTask || isCompletingMinimal) {
+      if (!task?.minimalTask) navigate('/dashboard');
       return;
     }
+    setIsCompletingMinimal(true);
     try {
       await supabase.from('tasks').update({ is_completed: true }).eq('id', task.minimalTask.id);
-      navigate('/dashboard');
+      setTimeout(() => navigate('/dashboard'), 800);
     } catch (err) {
       console.error('Failed to complete minimal task', err);
+      setIsCompletingMinimal(false);
     }
   };
 
@@ -153,6 +158,7 @@ const DailyTaskPage = () => {
           categoryName={taskCategory}
           onComplete={handleCompleteMain}
           onSkip={handleSkip}
+          isCompleting={isCompletingMain}
         />
       )}
 
@@ -162,6 +168,7 @@ const DailyTaskPage = () => {
         description={task?.minimalTask?.description || "שתי כוס מים עכשיו. זה הכל. גם זה נחשב."}
         buttonText="גם את זה עשיתי"
         onComplete={handleCompleteMinimal}
+        isCompleting={isCompletingMinimal}
       />
 
       <MotivationalSection 

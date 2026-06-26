@@ -49,27 +49,37 @@ const DashboardPage = () => {
         if (checkinData && checkinData.length > 0) {
           const uniqueDates = [...new Set(checkinData.map(d => d.date))].sort((a,b) => b.localeCompare(a));
           
-          // Streak calc
+          // Streak calc - using local date to match how user perceives "today"
           let currentStreak = 0;
+          
+          // Helper to format Date as YYYY-MM-DD in local time
+          const getLocalYMD = (d) => {
+            const tzOffset = d.getTimezoneOffset() * 60000;
+            return new Date(d.getTime() - tzOffset).toISOString().split('T')[0];
+          };
+
           const today = new Date();
           const yesterday = new Date(today);
           yesterday.setDate(yesterday.getDate() - 1);
           
-          const todayStr = today.toISOString().split('T')[0];
-          const yesterdayStr = yesterday.toISOString().split('T')[0];
+          const todayStr = getLocalYMD(today);
+          const yesterdayStr = getLocalYMD(yesterday);
           
           let expectedDate = new Date();
           if (uniqueDates[0] === todayStr) {
             // Checked in today
+            expectedDate = today;
           } else if (uniqueDates[0] === yesterdayStr) {
-            expectedDate = yesterday; // Checked in yesterday
+            // Checked in yesterday
+            expectedDate = yesterday; 
           } else {
-            expectedDate = null; // Missed yesterday and today
+            // Missed yesterday and today
+            expectedDate = null; 
           }
 
           if (expectedDate) {
             for (const dStr of uniqueDates) {
-              const expStr = expectedDate.toISOString().split('T')[0];
+              const expStr = getLocalYMD(expectedDate);
               if (dStr === expStr) {
                 currentStreak++;
                 expectedDate.setDate(expectedDate.getDate() - 1);
@@ -155,7 +165,7 @@ const DashboardPage = () => {
           </div>
         )}
         <div className="premium-content-inner">
-          {stats.checkinCount < 3 ? (
+          {stats.checkinCount < 2 ? (
             <EmptyState 
               icon="pending_actions"
               title="עדיין אין מספיק נתונים"
