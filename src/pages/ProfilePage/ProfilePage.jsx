@@ -29,19 +29,20 @@ const ProfilePage = () => {
           const nextMonth = new Date();
           nextMonth.setMonth(now.getMonth() + 1);
           
-          console.log("Executing Supabase Update for user:", user.id);
-          const { error } = await supabase.from('subscriptions').update({
+          console.log("Executing Supabase Upsert for user:", user.id);
+          const { error } = await supabase.from('subscriptions').upsert({
+            user_id: user.id,
             type: 'premium',
+            is_active: true,
             start_date: now.toISOString(),
             end_date: nextMonth.toISOString(),
-            is_active: true,
             updated_at: now.toISOString()
-          }).eq('user_id', user.id);
+          }, { onConflict: 'user_id' });
           
           if (error) {
-            console.error("Supabase Update Error:", error);
+            console.error("Supabase Upsert Error:", error);
           } else {
-            console.log("Supabase Update Success! Subscription is now Premium.");
+            console.log("Supabase Upsert Success! Subscription is now Premium.");
           }
           
           // Clean up the URL to prevent re-triggering on refresh
