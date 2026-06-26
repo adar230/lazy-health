@@ -11,6 +11,7 @@ const DailyTaskPage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [task, setTask] = useState(null);
+  const [minimalTask, setMinimalTask] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showMinimal, setShowMinimal] = useState(false);
   const [isCompletingMain, setIsCompletingMain] = useState(false);
@@ -27,7 +28,7 @@ const DailyTaskPage = () => {
         if (latestTaskId) {
           query = query.eq('id', latestTaskId).single();
         } else {
-          query = query.eq('user_id', user.id).order('created_at', { ascending: false }).limit(1).single();
+          query = query.eq('user_id', user.id).eq('is_minimal', false).order('created_at', { ascending: false }).limit(1).single();
         }
 
         const { data: taskData, error: taskError } = await query;
@@ -66,7 +67,7 @@ const DailyTaskPage = () => {
             if (minErr) console.error("Error fetching minimal task:", minErr);
               
             if (minimalData) {
-              setTask(prev => ({ ...prev, minimalTask: minimalData }));
+              setMinimalTask(minimalData);
               if (minimalData.is_completed) {
                 setIsCompletingMinimal(true);
               }
@@ -129,17 +130,17 @@ const DailyTaskPage = () => {
   const handleCompleteMinimal = async () => {
     console.log("--- Debug Minimal Task Update ---");
     console.log("Full task object:", task);
-    console.log("Minimal Task Object:", task?.minimalTask);
-    console.log("Minimal Task ID to update:", task?.minimalTask?.id);
+    console.log("Minimal Task Object:", minimalTask);
+    console.log("Minimal Task ID to update:", minimalTask?.id);
 
-    if (!task?.minimalTask || isCompletingMinimal) {
+    if (!minimalTask || isCompletingMinimal) {
       console.warn("No minimal task found or already completing, redirecting to dashboard");
-      if (!task?.minimalTask) navigate('/dashboard');
+      if (!minimalTask) navigate('/dashboard');
       return;
     }
     setIsCompletingMinimal(true);
     try {
-      const { data, error } = await supabase.from('tasks').update({ is_completed: true }).eq('id', task.minimalTask.id).select();
+      const { data, error } = await supabase.from('tasks').update({ is_completed: true }).eq('id', minimalTask.id).select();
       console.log("Supabase Update Result:", data, error);
       setTimeout(() => navigate('/dashboard'), 800);
     } catch (err) {
@@ -180,8 +181,8 @@ const DailyTaskPage = () => {
 
       <FallbackTaskCard 
         icon="water_drop"
-        label={task?.minimalTask?.title || "משימה מינימלית חלופית"}
-        description={task?.minimalTask?.description || "שתי כוס מים עכשיו. זה הכל. גם זה נחשב."}
+        label={minimalTask?.title || "משימה מינימלית חלופית"}
+        description={minimalTask?.description || "שתי כוס מים עכשיו. זה הכל. גם זה נחשב."}
         buttonText="גם את זה עשיתי"
         onComplete={handleCompleteMinimal}
         isCompleting={isCompletingMinimal}
