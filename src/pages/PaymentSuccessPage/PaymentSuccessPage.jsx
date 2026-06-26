@@ -29,8 +29,8 @@ const PaymentSuccessPage = () => {
       {status === 'success' && (
         <div className="success-message">
           <span className="material-symbols-rounded success-icon">check_circle</span>
-          <h2>תשלום בוצע בהצלחה!</h2>
-          <p>ברוך הבא למשפחת הפרימיום של Lazy Health 👑</p>
+          <h2>התשלום בוצע בהצלחה!</h2>
+          <p>ברוכים הבאים למשפחת הפרימיום! 👑</p>
           <p>מועבר לפרופיל האישי שלך...</p>
         </div>
       )}
