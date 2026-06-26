@@ -49,13 +49,13 @@ const DailyCheckInPage = () => {
         .eq('user_id', user.id)
         .eq('date', today)
         .eq('checkin_type', type)
-        .maybeSingle();
+        .limit(1);
       
       console.log("Lock Query Result Data:", data);
       console.log("Lock Query Error:", error);
       console.log("------------------------");
       
-      if (data) setIsAlreadyCompleted(true);
+      if (data && data.length > 0) setIsAlreadyCompleted(true);
     };
 
     const hour = new Date().getHours();
