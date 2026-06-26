@@ -147,14 +147,13 @@ const DailyCheckInPage = () => {
       if (checkinError) throw checkinError;
 
       const aiData = checkinType === 'morning' 
+      const promptData = checkinType === 'morning' 
         ? { sleepHours: sleepHoursFloat, energyLevel: parseInt(energyLevel, 10) }
         : { waterGlasses: waterInt, ateHealthy: foodBool, wasActive: activeBool, freeTime: freeTimeInt };
 
       // Generate both tasks concurrently
-      const [aiTask, minimalAiTask] = await Promise.all([
-        generateDailyTask(checkinType, aiData),
-        generateMinimalTask(checkinType, aiData)
-      ]);
+      const aiTask = await generateDailyTask(checkinType, promptData);
+      const minimalTask = await generateMinimalTask(checkinType, promptData, aiTask.title);
 
       // Save main task to Supabase
       const { data: taskData, error: taskError } = await supabase.from('tasks').insert({
@@ -174,10 +173,10 @@ const DailyCheckInPage = () => {
       const { error: minimalTaskError } = await supabase.from('tasks').insert({
         user_id: user?.id,
         checkin_id: checkinData.id,
-        title: minimalAiTask.title,
-        description: minimalAiTask.description,
-        category: minimalAiTask.category,
-        difficulty: minimalAiTask.difficulty,
+        title: minimalTask.title,
+        description: minimalTask.description,
+        category: minimalTask.category,
+        difficulty: minimalTask.difficulty,
         is_completed: false,
         is_minimal: true
       });

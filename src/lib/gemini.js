@@ -97,12 +97,19 @@ export const generateDailyTask = async (type, data) => {
   return callOpenRouterWithRetry(prompt);
 };
 
-export const generateMinimalTask = async (type, data) => {
+export const generateMinimalTask = async (type, data, mainTaskTitle = '') => {
   let prompt = '';
+  const avoidMain = mainTaskTitle ? `The user's main task is '${mainTaskTitle}'. Do NOT suggest this. Generate a COMPLETELY DIFFERENT task that is much easier and shorter (under 3 minutes). For example, if the main task is walking, suggest drinking a glass of water or doing a quick stretch.` : '';
+
   if (type === 'morning') {
-    prompt = `המשתמש ישן ${data.sleepHours || 7} שעות, רמת האנרגיה שלו היא ${data.energyLevel || 3} מתוך 5. צור משימה בריאותית מינימלית אחת קטנה וקלילה בעברית לבוקר שלוקחת פחות מ-5 דקות. המשימה חייבת להיות קלה מאוד. vary the task type, do not always suggest walking or breathing exercises. Include variety like: nutrition tasks, hydration, sleep hygiene, mental wellness, stretching. החזר JSON בלבד עם השדות: title, description, category (שינה/תזונה/שתייה/פעילות/אורח חיים), difficulty (קל).`;
+    prompt = `המשתמש ישן ${data.sleepHours || 7} שעות, רמת האנרגיה שלו היא ${data.energyLevel || 3} מתוך 5. ${avoidMain} צור משימה בריאותית מינימלית אחת קטנה וקלילה בעברית לבוקר שלוקחת פחות מ-3 דקות. המשימה חייבת להיות קלה מאוד. vary the task type, do not always suggest walking or breathing exercises. Include variety like: nutrition tasks, hydration, sleep hygiene, mental wellness, stretching. החזר JSON בלבד עם השדות: title, description, category (שינה/תזונה/שתייה/פעילות/אורח חיים), difficulty (קל).`;
   } else {
-    prompt = `המשתמש שתה ${data.waterGlasses || 5} כוסות מים, אכל בריא: ${data.ateHealthy ? 'כן' : 'לא'}, והיה פעיל היום: ${data.wasActive ? 'כן' : 'לא'}, ויש לו ${data.freeTime || 15} דקות פנויות. צור משימה בריאותית מינימלית אחת קטנה וקלילה בעברית לערב שלוקחת פחות מ-5 דקות. המשימה חייבת להיות קלה מאוד. vary the task type, do not always suggest walking or breathing exercises. Include variety like: nutrition tasks, hydration, sleep hygiene, mental wellness, stretching. החזר JSON בלבד עם השדות: title, description, category (שינה/תזונה/שתייה/פעילות/אורח חיים), difficulty (קל).`;
+    prompt = `המשתמש שתה ${data.waterGlasses || 5} כוסות מים, אכל בריא: ${data.ateHealthy ? 'כן' : 'לא'}, והיה פעיל היום: ${data.wasActive ? 'כן' : 'לא'}, ויש לו ${data.freeTime || 15} דקות פנויות. ${avoidMain} צור משימה בריאותית מינימלית אחת קטנה וקלילה בעברית לערב שלוקחת פחות מ-3 דקות. המשימה חייבת להיות קלה מאוד. vary the task type, do not always suggest walking or breathing exercises. Include variety like: nutrition tasks, hydration, sleep hygiene, mental wellness, stretching. החזר JSON בלבד עם השדות: title, description, category (שינה/תזונה/שתייה/פעילות/אורח חיים), difficulty (קל).`;
   }
+  return callOpenRouterWithRetry(prompt);
+};
+
+export const generateDashboardInsights = async (statsText) => {
+  const prompt = `Here is the user's health check-in data for the last week:\n${statsText}\nProvide 3 short, personalized, encouraging insights in Hebrew about their health patterns. Return a JSON array of strings: ["insight 1", "insight 2", "insight 3"]. Return ONLY the JSON array.`;
   return callOpenRouterWithRetry(prompt);
 };

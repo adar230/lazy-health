@@ -1,0 +1,63 @@
+.mood-chart-card {
+  background: var(--color-surface);
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.mood-chart-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  height: 150px;
+  margin-top: 2rem;
+  position: relative;
+  border-bottom: 2px dashed rgba(0, 0, 0, 0.1);
+}
+
+.mood-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  position: relative;
+  height: 100%;
+}
+
+.mood-point-container {
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+.mood-point {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  background: linear-gradient(135deg, #FF9A9E 0%, #FECFEF 100%);
+  border-radius: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(50%);
+  box-shadow: 0 4px 8px rgba(255, 154, 158, 0.4);
+  z-index: 2;
+}
+
+.mood-line {
+  position: absolute;
+  width: 4px;
+  background: linear-gradient(to top, transparent, #FF9A9E);
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 4px;
+  z-index: 1;
+}
+
+.mood-column .day-label {
+  position: absolute;
+  bottom: -25px;
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+}

@@ -4,8 +4,10 @@ import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import StatCard from '../../components/StatCard/StatCard';
 import WeeklyChart from '../../components/WeeklyChart/WeeklyChart';
+import MoodChart from '../../components/MoodChart/MoodChart';
 import InsightCard from '../../components/InsightCard/InsightCard';
 import EmptyState from '../../components/EmptyState/EmptyState';
+import { generateDashboardInsights } from '../../lib/gemini';
 import './DashboardPage.css';
 
 const DashboardPage = () => {
@@ -13,7 +15,9 @@ const DashboardPage = () => {
   const navigate = useNavigate();
   const [subType, setSubType] = useState('free');
   const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState({ avgSleep: "0", avgEnergy: "0", streak: 0, chartData: [], checkinCount: 0 });
+  const [stats, setStats] = useState({ avgSleep: "0", avgEnergy: "0", streak: 0, chartData: [], checkinCount: 0, completionRate: "0%" });
+  const [aiInsights, setAiInsights] = useState(null);
+  const [loadingInsights, setLoadingInsights] = useState(false);
 
   useEffect(() => {
     const fetchSubscription = async () => {
@@ -89,7 +93,7 @@ const DashboardPage = () => {
             }
           }
 
-          // Averages
+          // Averages & Sleep Emoji
           let sleepSum = 0;
           let sleepCount = 0;
           let energySum = 0;
@@ -100,8 +104,34 @@ const DashboardPage = () => {
             if (d.energy_level) { energySum += d.energy_level; energyCount++; }
           });
           
-          const avgSleep = sleepCount > 0 ? (sleepSum / sleepCount).toFixed(1) : "0";
+          const sleepVal = sleepCount > 0 ? (sleepSum / sleepCount) : 0;
+          let sleepEmoji = '😴';
+          if (sleepVal >= 6 && sleepVal <= 8) sleepEmoji = '😊';
+          if (sleepVal > 8) sleepEmoji = '🌟';
+          
+          const avgSleep = sleepCount > 0 ? sleepVal.toFixed(1) + " " + sleepEmoji : "0 😴";
           const avgEnergy = energyCount > 0 ? (energySum / energyCount).toFixed(1) : "0";
+
+          // Completion Rate
+          let completionRate = "0%";
+          try {
+            const tzOffsetLocal = new Date().getTimezoneOffset() * 60000;
+            const oneWeekAgo = new Date(Date.now() - tzOffsetLocal);
+            oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+            
+            const { data: tasksData } = await supabase
+              .from('tasks')
+              .select('is_completed')
+              .eq('user_id', user.id)
+              .gte('created_at', oneWeekAgo.toISOString());
+              
+            if (tasksData && tasksData.length > 0) {
+              const completed = tasksData.filter(t => t.is_completed).length;
+              completionRate = Math.round((completed / tasksData.length) * 100) + "%";
+            }
+          } catch (e) {
+            console.error("Failed to calc completion rate", e);
+          }
 
           // Chart data (last 7 days ascending)
           const chartDates = uniqueDates.slice(0, 7).reverse();
@@ -127,8 +157,38 @@ const DashboardPage = () => {
             avgEnergy, 
             streak: currentStreak, 
             chartData: chartDataMapped, 
-            checkinCount: checkinData.length 
+            checkinCount: checkinData.length,
+            completionRate
           });
+
+          // Fetch AI Insights in background if premium and enough data
+          if (subData && subData.is_active && checkinData.length >= 3) {
+            const fetchInsights = async () => {
+              setLoadingInsights(true);
+              try {
+                const summaryText = checkinData.slice(0, 7).map(d => 
+                  `Date: ${d.date}, Sleep: ${d.sleep_hours}h, Energy: ${d.energy_level}/5, Active: ${d.was_active}`
+                ).join('\n');
+                
+                const aiResultStr = await generateDashboardInsights(summaryText);
+                try {
+                   // Safely parse JSON array
+                   let cleanJsonStr = aiResultStr.replace(/```json/g, '').replace(/```/g, '').trim();
+                   const parsed = JSON.parse(cleanJsonStr);
+                   if (Array.isArray(parsed)) {
+                     setAiInsights(parsed);
+                   }
+                } catch (e) {
+                   setAiInsights(["הקפד על שעות השינה שלך, זה קריטי לאנרגיה ביום למחרת.", "שתיית מים בבוקר משפרת את הריכוז.", "נסה להוסיף 5 דקות של הליכה בסוף היום."]);
+                }
+              } catch (err) {
+                console.error("AI Insight Error:", err);
+              } finally {
+                setLoadingInsights(false);
+              }
+            };
+            fetchInsights();
+          }
         }
       } catch (err) {
         console.error('Error fetching data in dashboard:', err);
@@ -155,6 +215,7 @@ const DashboardPage = () => {
         <StatCard icon="bolt" number={stats.avgEnergy} label="אנרגיה ממוצעת" />
         <StatCard icon="spa" number={stats.avgSleep} label="שעות שינה" />
         <StatCard icon="fitness_center" number={stats.streak.toString()} label="ימים ברצף" />
+        <StatCard icon="task_alt" number={stats.completionRate} label="השלמת משימות" />
       </section>
 
       <div className={`premium-content-wrapper ${!isPremium ? 'locked' : ''}`}>
@@ -175,12 +236,32 @@ const DashboardPage = () => {
           ) : (
             <>
               <WeeklyChart data={stats.chartData} />
+              
+              <MoodChart data={stats.chartData} />
 
-              <InsightCard 
-                icon="lightbulb"
-                title="השינה שלך משפיעה עליך"
-                description={`בממוצע ישנת ${stats.avgSleep} שעות. נראה שבימים עם שינה טובה, רמת האנרגיה עולה!`}
-              />
+              <div style={{ marginTop: '1.5rem' }}>
+                {loadingInsights ? (
+                  <div className="loading" style={{ fontSize: '1rem', padding: '1rem' }}>מנתח את הנתונים שלך... ✨</div>
+                ) : aiInsights && aiInsights.length > 0 ? (
+                  <InsightCard 
+                    icon="auto_awesome"
+                    title="ניתוח AI אישי"
+                    description={
+                      <ul style={{ paddingRight: '1.5rem', marginTop: '0.5rem', lineHeight: '1.6' }}>
+                        {aiInsights.map((ins, i) => (
+                          <li key={i} style={{ marginBottom: '0.5rem', color: 'var(--color-text-secondary)' }}>{ins}</li>
+                        ))}
+                      </ul>
+                    }
+                  />
+                ) : (
+                  <InsightCard 
+                    icon="lightbulb"
+                    title="השינה שלך משפיעה עליך"
+                    description={`בממוצע ישנת ${stats.avgSleep.split(' ')[0]} שעות. נראה שבימים עם שינה טובה, רמת האנרגיה עולה!`}
+                  />
+                )}
+              </div>
             </>
           )}
         </div>
