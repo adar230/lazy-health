@@ -108,7 +108,7 @@ const ProfilePage = () => {
   const handleLogout = async () => {
     try {
       await supabase.auth.signOut();
-      navigate('/');
+      window.location.href = '/';
     } catch (error) {
       console.error('Error logging out:', error.message);
     }
