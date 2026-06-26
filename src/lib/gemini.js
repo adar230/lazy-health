@@ -88,12 +88,22 @@ const callOpenRouterWithRetry = async (prompt) => {
   return DEFAULT_TASK;
 };
 
-export const generateDailyTask = async (sleepHours, energyLevel, freeTime) => {
-  const prompt = `המשתמש ישן ${sleepHours} שעות, רמת האנרגיה שלו היא ${energyLevel} מתוך 5, ויש לו ${freeTime} זמן פנוי היום. צור משימה בריאותית אחת קצרה ומותאמת אישית בעברית. החזר JSON בלבד עם השדות: title, description, category (שינה/תזונה/שתייה/פעילות/אורח חיים), difficulty (קל/בינוני).`;
+export const generateDailyTask = async (type, data) => {
+  let prompt = '';
+  if (type === 'morning') {
+    prompt = `המשתמש ישן ${data.sleepHours || 7} שעות, רמת האנרגיה שלו היא ${data.energyLevel || 3} מתוך 5. צור משימה בריאותית אחת קצרה ומותאמת אישית בעברית לבוקר. החזר JSON בלבד עם השדות: title, description, category (שינה/תזונה/שתייה/פעילות/אורח חיים), difficulty (קל/בינוני).`;
+  } else {
+    prompt = `המשתמש שתה ${data.waterGlasses || 5} כוסות מים, אכל בריא: ${data.ateHealthy ? 'כן' : 'לא'}, והיה פעיל היום: ${data.wasActive ? 'כן' : 'לא'}. צור משימה בריאותית אחת קצרה ומותאמת אישית בעברית לערב. החזר JSON בלבד עם השדות: title, description, category (שינה/תזונה/שתייה/פעילות/אורח חיים), difficulty (קל/בינוני).`;
+  }
   return callOpenRouterWithRetry(prompt);
 };
 
-export const generateMinimalTask = async (sleepHours, energyLevel, freeTime) => {
-  const prompt = `המשתמש ישן ${sleepHours} שעות, רמת האנרגיה שלו היא ${energyLevel} מתוך 5. צור משימה בריאותית מינימלית אחת קטנה וקלילה בעברית שלוקחת פחות מ-5 דקות. המשימה חייבת להיות קלה מאוד. החזר JSON בלבד עם השדות: title, description, category (שינה/תזונה/שתייה/פעילות/אורח חיים), difficulty (קל).`;
+export const generateMinimalTask = async (type, data) => {
+  let prompt = '';
+  if (type === 'morning') {
+    prompt = `המשתמש ישן ${data.sleepHours || 7} שעות, רמת האנרגיה שלו היא ${data.energyLevel || 3} מתוך 5. צור משימה בריאותית מינימלית אחת קטנה וקלילה בעברית לבוקר שלוקחת פחות מ-5 דקות. המשימה חייבת להיות קלה מאוד. החזר JSON בלבד עם השדות: title, description, category (שינה/תזונה/שתייה/פעילות/אורח חיים), difficulty (קל).`;
+  } else {
+    prompt = `המשתמש שתה ${data.waterGlasses || 5} כוסות מים, אכל בריא: ${data.ateHealthy ? 'כן' : 'לא'}, והיה פעיל היום: ${data.wasActive ? 'כן' : 'לא'}. צור משימה בריאותית מינימלית אחת קטנה וקלילה בעברית לערב שלוקחת פחות מ-5 דקות. המשימה חייבת להיות קלה מאוד. החזר JSON בלבד עם השדות: title, description, category (שינה/תזונה/שתייה/פעילות/אורח חיים), difficulty (קל).`;
+  }
   return callOpenRouterWithRetry(prompt);
 };
