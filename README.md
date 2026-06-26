@@ -1,16 +1,100 @@
-# React + Vite
+# 🌿 Lazy Health
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+אפליקציית מעקב בריאות יומית מבוססת AI
 
-Currently, two official plugins are available:
+🔗 https://lazy-health-zizy.vercel.app
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## מה האפליקציה עושה?
 
-## React Compiler
+Lazy Health היא אפליקציית בריאות יומית שמתאימה את עצמה למשתמש. בכל בוקר ובכל ערב, המשתמש ממלא שאלון קצר על מצבו — שינה, אנרגיה, שתייה ופעילות — והאפליקציה יוצרת עבורו משימה בריאותית מותאמת אישית באמצעות AI.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## איזו בעיה האפליקציה פותרת?
 
-## Expanding the ESLint configuration
+אנשים רבים רוצים לשמור על אורח חיים בריא, אבל אפליקציות בריאות קיימות מסובכות מדי, מכבידות מדי, ומצפות ממשתמשים לשנות הרגלים בבת אחת.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Lazy Health פותרת את זה בגישה קטנה ומדויקת:
+
+* שאלון יומי קצר של 3 שאלות
+* משימה אחת מותאמת ליום שלך — לא יותר
+* אם אין לך כוח — יש תמיד משימה מינימלית חלופית
+
+## קהל היעד
+
+אנשים בין גיל 18–35 שרוצים להתחיל לשמור על בריאותם אבל מוצאים אפליקציות בריאות קיימות מאיימות או מורכבות מדי. המשתמש מגיע לאפליקציה פעמיים ביום — בוקר וערב — לפחות מ-2 דקות בכל פעם.
+
+## מתחרים ובידול
+
+| מתחרה | מה הם עושים | למה Lazy Health שונה |
+|---|---|---|
+| MyFitnessPal | מעקב קלוריות מפורט | אנחנו פשוטים יותר, לא צריך לספור כלום |
+| Headspace | מדיטציה ומיינדפולנס בלבד | אנחנו מכסים את כל הבריאות היומית |
+| Apple Health | אוסף נתונים ממכשירים | אנחנו יוצרים משימות מותאמות, לא רק מציגים נתונים |
+| Google Fit | מעקב פעילות גופנית | אנחנו מתמקדים במשימה אחת ברת-ביצוע ביום |
+
+הבידול שלנו: AI שמבין את המצב היומי שלך וממליץ על משימה שאפשר באמת לעשות — גם כשאין כוח.
+
+## פיצ'רים עיקריים
+
+* 🌅 **שאלון בוקר** — שינה, אנרגיה, זמן פנוי
+* 🌙 **שאלון ערב** — שתייה, תזונה, פעילות, זמן פנוי
+* 🤖 **משימה יומית מבוססת AI** — מותאמת אישית לנתוני היום
+* ⚡ **משימה מינימלית** — חלופה קלה יותר כשאין אנרגיה
+* 📊 **דשבורד שבועי/חודשי** — גרפים, streak, מעקב הרגלים
+* 👑 **Premium** — ניתוח AI מעמיק של נתוני השבוע/חודש, תובנות מותאמות אישית, סטטיסטיקות מתקדמות
+
+## שירותים חיצוניים
+
+| שירות | סוג | תפקיד |
+|---|---|---|
+| Supabase | בסיס נתונים + Auth | אחסון נתונים, התחברות משתמשים, RLS |
+| Vercel | Hosting | אחסון האפליקציה ו-CI/CD |
+| Stripe | תשלומים (Sandbox) | מנוי פרימיום — ₪30.98 לחודש |
+| OpenRouter | AI API | יצירת משימות בריאות מותאמות אישית וניתוח שבועי/חודשי בדשבורד |
+
+## מבנה בסיס הנתונים (ERD)
+
+הטבלאות:
+
+* `profiles` — פרטי המשתמש (שם, תמונה)
+* `daily_checkins` — שאלוני בוקר/ערב
+* `tasks` — משימות יומיות (רגילות ומינימליות)
+* `subscriptions` — מנוי חינמי/פרימיום
+
+## משתמש דמו לבדיקה
+
+| פרט | ערך |
+|---|---|
+| אימייל | lea@gmail.com |
+| סיסמה | 123456 |
+| סוג מנוי | פרימיום ✅ |
+
+כרטיס בדיקה ל-Stripe: `4242 4242 4242 4242` | תפוגה: כל תאריך עתידי | CVC: כל 3 ספרות
+
+## הרצה מקומית
+
+```bash
+git clone https://github.com/adar230/lazy-health.git
+cd lazy-health
+npm install
+```
+
+צרי קובץ `.env`:
+
+```env
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+VITE_STRIPE_PAYMENT_LINK=your_stripe_payment_link
+VITE_OPENROUTER_API_KEY=your_openrouter_key
+```
+
+```bash
+npm run dev
+```
+
+## טכנולוגיות
+
+* **Frontend:** Vite + React
+* **Backend:** Supabase (PostgreSQL + Auth + RLS)
+* **AI:** OpenRouter API
+* **תשלומים:** Stripe
+* **Hosting:** Vercel
