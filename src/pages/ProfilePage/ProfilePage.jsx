@@ -35,8 +35,7 @@ const ProfilePage = () => {
             type: 'premium',
             is_active: true,
             start_date: now.toISOString(),
-            end_date: nextMonth.toISOString(),
-            updated_at: now.toISOString()
+            end_date: nextMonth.toISOString()
           }, { onConflict: 'user_id' });
           
           if (error) {

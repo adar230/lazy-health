@@ -37,6 +37,21 @@ const RegisterPage = () => {
 
       if (error) throw error;
       
+      if (data?.user) {
+        await Promise.all([
+          supabase.from('profiles').insert({
+            user_id: data.user.id,
+            name: name
+          }),
+          supabase.from('subscriptions').insert({
+            user_id: data.user.id,
+            type: 'free',
+            is_active: true,
+            start_date: new Date().toISOString()
+          })
+        ]);
+      }
+      
       navigate('/checkin');
     } catch (err) {
       setError(err.message);
