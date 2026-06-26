@@ -70,6 +70,7 @@ const DailyTaskPage = () => {
               setMinimalTask(minimalData);
               if (minimalData.is_completed) {
                 setIsCompletingMinimal(true);
+                setShowMinimal(true);
               }
             }
           }
@@ -179,14 +180,16 @@ const DailyTaskPage = () => {
         />
       )}
 
-      <FallbackTaskCard 
-        icon="water_drop"
-        label={minimalTask?.title || "משימה מינימלית חלופית"}
-        description={minimalTask?.description || "שתי כוס מים עכשיו. זה הכל. גם זה נחשב."}
-        buttonText="גם את זה עשיתי"
-        onComplete={handleCompleteMinimal}
-        isCompleting={isCompletingMinimal}
-      />
+      {showMinimal && (
+        <FallbackTaskCard 
+          icon="water_drop"
+          label={minimalTask?.title || "משימה מינימלית חלופית"}
+          description={minimalTask?.description || "שתי כוס מים עכשיו. זה הכל. גם זה נחשב."}
+          buttonText="גם את זה עשיתי"
+          onComplete={handleCompleteMinimal}
+          isCompleting={isCompletingMinimal}
+        />
+      )}
 
       <MotivationalSection 
         imageUrl="https://lh3.googleusercontent.com/aida-public/AB6AXuDyCuApFxnIb9aUiY9u1pnDMjUs43R2cdVQMRsA2utbxzdAv-WtQlIgDlg78NrrMLJhV5CR4clcODyvvAUx00wc-NhEyni-Oy7k3M-xyVSG0lkyzi85KBNdtaGYkohl-K23EEu-lG_hejUx8nxvae6aB-pWPXfkn-EJZ5z8tbpryAb3bGzxkntbJE1z4FY3qvgTnYbYWTromQ1ixCSnbcTs75yBUvrR7Wg_-U6tOKi0jt1x0aNFrYkGpgMnezFC9A4rjMQgjrQ1fZ0c"
