@@ -21,7 +21,7 @@ export const generateDailyTask = async (sleepHours, energyLevel, freeTime) => {
         'X-Title': 'Lazy Health'
       },
       body: JSON.stringify({
-        model: 'nvidia/nemotron-3-ultra-550b-a55b:free',
+        model: 'mistralai/mistral-7b-instruct:free',
         messages: [
           { role: 'user', content: prompt }
         ]
@@ -94,7 +94,7 @@ export const generateMinimalTask = async (sleepHours, energyLevel, freeTime) => 
         'X-Title': 'Lazy Health'
       },
       body: JSON.stringify({
-        model: 'nvidia/nemotron-3-ultra-550b-a55b:free',
+        model: 'mistralai/mistral-7b-instruct:free',
         messages: [
           { role: 'user', content: prompt }
         ]
