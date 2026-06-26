@@ -43,11 +43,19 @@ export const generateDailyTask = async (sleepHours, energyLevel, freeTime) => {
       throw new Error('Invalid response from OpenRouter');
     }
 
+    console.log('Raw AI Response:', textContent);
+
     try {
-      // AI sometimes wraps json in markdown code blocks
-      const cleanJson = textContent.replace(/```json/g, '').replace(/```/g, '').trim();
+      // Extract everything between the first '{' and the last '}'
+      const jsonMatch = textContent.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) {
+        throw new Error('No JSON object found in response');
+      }
+      
+      const cleanJson = jsonMatch[0].trim();
       return JSON.parse(cleanJson);
     } catch (e) {
+      console.error('Failed to parse OpenRouter JSON:', e);
       throw new Error('Failed to parse OpenRouter JSON response');
     }
   } catch (err) {
