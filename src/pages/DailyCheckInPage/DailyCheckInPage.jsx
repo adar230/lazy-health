@@ -17,6 +17,7 @@ const DailyCheckInPage = () => {
   const [waterGlasses, setWaterGlasses] = useState(null);
   const [ateHealthy, setAteHealthy] = useState(null);
   const [wasActive, setWasActive] = useState(null);
+  const [freeTime, setFreeTime] = useState(null);
 
   // Flow state
   const [checkinType, setCheckinType] = useState('none');
@@ -56,6 +57,7 @@ const DailyCheckInPage = () => {
       if (!waterGlasses) missing.push('water');
       if (!ateHealthy) missing.push('food');
       if (!wasActive) missing.push('activity');
+      if (!freeTime) missing.push('freeTime');
     }
 
     if (missing.length > 0) {
@@ -65,6 +67,11 @@ const DailyCheckInPage = () => {
     
     setMissingFields([]);
     setLoading(true);
+
+    let freeTimeInt = 15;
+    if (freeTime === 'פחות מ-10') freeTimeInt = 5;
+    else if (freeTime === "10-20 דק'") freeTimeInt = 15;
+    else if (freeTime === 'יותר משעה') freeTimeInt = 60;
 
     let sleepHoursFloat = 7.5;
     if (sleepHours === 'פחות מ-5') sleepHoursFloat = 4;
@@ -89,7 +96,7 @@ const DailyCheckInPage = () => {
         user_id: user?.id,
         date: new Date().toISOString().split('T')[0],
         checkin_type: checkinType,
-        free_time: 15 // defaulting for DB schema constraints since it was removed from UI
+        free_time: freeTimeInt 
       };
 
       if (checkinType === 'morning') {
@@ -111,7 +118,7 @@ const DailyCheckInPage = () => {
 
       const aiData = checkinType === 'morning' 
         ? { sleepHours: sleepHoursFloat, energyLevel: parseInt(energyLevel, 10) }
-        : { waterGlasses: waterInt, ateHealthy: foodBool, wasActive: activeBool };
+        : { waterGlasses: waterInt, ateHealthy: foodBool, wasActive: activeBool, freeTime: freeTimeInt };
 
       // Generate both tasks concurrently
       const [aiTask, minimalAiTask] = await Promise.all([
@@ -170,12 +177,23 @@ const DailyCheckInPage = () => {
     );
   }
 
+  if (loading) {
+    return (
+      <div className="daily-checkin-page">
+        <div style={{ textAlign: 'center', marginTop: '4rem', padding: '2rem' }}>
+          <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: 'var(--color-primary)' }}>מכין לך משימה...</h2>
+          <p style={{ color: 'var(--color-text-secondary)' }}>זה עשוי לקחת כמה שניות</p>
+        </div>
+      </div>
+    );
+  }
+
   if (isCompleted) {
     return (
       <div className="daily-checkin-page">
         <div style={{ textAlign: 'center', marginTop: '4rem', padding: '2rem' }}>
-          <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: 'var(--color-primary)' }}>השאלון הושלם בהצלחה!</h2>
-          <p style={{ fontSize: '1.2rem', marginBottom: '2rem' }}>המשימה שלך מוכנה</p>
+          <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: 'var(--color-primary)' }}>השאלון הושלם בהצלחה! 🌟</h2>
+          <p style={{ fontSize: '1.2rem', marginBottom: '2rem' }}>המשימה שלך מוכנה.</p>
           <button className="submit-btn" onClick={() => navigate('/task')}>לצפייה במשימה</button>
         </div>
       </div>
@@ -284,6 +302,31 @@ const DailyCheckInPage = () => {
                     onClick={() => setWasActive(opt)} 
                   />
                 ))}
+              </div>
+            </QuestionCard>
+
+            <QuestionCard 
+              icon="schedule" 
+              question="כמה זמן פנוי יש לך?" 
+              error={missingFields.includes('freeTime') ? "שדה חובה — בחר כדי להמשיך" : ""}
+            >
+              <div className="grid-cols-2">
+                <PillButton 
+                  label="פחות מ-10" 
+                  selected={freeTime === 'פחות מ-10'} 
+                  onClick={() => setFreeTime('פחות מ-10')} 
+                />
+                <PillButton 
+                  label="10-20 דק'" 
+                  selected={freeTime === "10-20 דק'"} 
+                  onClick={() => setFreeTime("10-20 דק'")} 
+                />
+                <PillButton 
+                  label="יותר משעה" 
+                  className="col-span-2" 
+                  selected={freeTime === 'יותר משעה'} 
+                  onClick={() => setFreeTime('יותר משעה')} 
+                />
               </div>
             </QuestionCard>
           </>
