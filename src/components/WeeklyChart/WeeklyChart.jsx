@@ -1,21 +1,55 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './WeeklyChart.css';
 
-const WeeklyChart = ({ data }) => {
-  const chartData = data || [
-    { day: "א'", sleep: 60, energy: 40 },
-    { day: "ב'", sleep: 75, energy: 55 },
-    { day: "ג'", sleep: 90, energy: 80 },
-    { day: "ד'", sleep: 65, energy: 45 },
-    { day: "ה'", sleep: 85, energy: 95 },
-    { day: "ו'", sleep: 70, energy: 60 },
-    { day: "ש'", sleep: 50, energy: 30 },
-  ];
+const WeeklyChart = ({ rawData, uniqueDates }) => {
+  const [chartRange, setChartRange] = useState('week');
+
+  const getChartData = () => {
+    if (!uniqueDates || uniqueDates.length === 0) return [];
+    
+    const count = chartRange === 'week' ? 7 : 30;
+    const chartDates = uniqueDates.slice(0, count).reverse();
+    const daysHe = ["א'", "ב'", "ג'", "ד'", "ה'", "ו'", "ש'"];
+    
+    return chartDates.map(dStr => {
+      const dayRecords = rawData.filter(d => d.date === dStr);
+      const sleep = dayRecords.find(d => d.sleep_hours)?.sleep_hours || 0;
+      const energy = dayRecords.find(d => d.energy_level)?.energy_level || 0;
+      
+      const dObj = new Date(dStr);
+      let label = daysHe[dObj.getDay()];
+      if (chartRange === 'month') {
+        label = `${dObj.getDate()}/${dObj.getMonth() + 1}`;
+      }
+
+      return {
+        day: label,
+        sleep: Math.min((sleep / 10) * 100, 100),
+        energy: Math.min((energy / 5) * 100, 100)
+      };
+    });
+  };
+
+  const chartData = getChartData();
 
   return (
     <section className="weekly-chart-card">
       <div className="chart-header">
         <h3 className="chart-title">אנרגיה VS שינה</h3>
+        <div className="chart-filters">
+          <button 
+            className={`filter-btn ${chartRange === 'month' ? 'active' : ''}`}
+            onClick={() => setChartRange('month')}
+          >
+            חודש
+          </button>
+          <button 
+            className={`filter-btn ${chartRange === 'week' ? 'active' : ''}`}
+            onClick={() => setChartRange('week')}
+          >
+            שבוע
+          </button>
+        </div>
       </div>
       
       <div className="chart-body">

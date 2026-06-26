@@ -4,7 +4,7 @@ import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import StatCard from '../../components/StatCard/StatCard';
 import WeeklyChart from '../../components/WeeklyChart/WeeklyChart';
-import MoodChart from '../../components/MoodChart/MoodChart';
+import HabitsTracker from '../../components/HabitsTracker/HabitsTracker';
 import InsightCard from '../../components/InsightCard/InsightCard';
 import EmptyState from '../../components/EmptyState/EmptyState';
 import { generateDashboardInsights } from '../../lib/gemini';
@@ -15,8 +15,7 @@ const DashboardPage = () => {
   const navigate = useNavigate();
   const [subType, setSubType] = useState('free');
   const [loading, setLoading] = useState(true);
-  const [chartRange, setChartRange] = useState('week');
-  const [stats, setStats] = useState({ avgSleep: "0", avgEnergy: "0", streak: 0, rawData: [], uniqueDates: [], checkinCount: 0, completionRate: "0%" });
+  const [stats, setStats] = useState({ avgSleep: "0", avgEnergy: "0", streak: 0, rawData: [], uniqueDates: [], checkinCount: 0, completionRate: "0%", popularCategory: "-", maxStreak: 0, bestDay: "-" });
   const [aiInsights, setAiInsights] = useState(null);
   const [loadingInsights, setLoadingInsights] = useState(false);
 
@@ -94,6 +93,42 @@ const DashboardPage = () => {
             }
           }
 
+          // Personal Best Streak (from all fetched checkins)
+          let maxStreak = 0;
+          let tempStreak = 0;
+          let prevDate = null;
+          [...uniqueDates].reverse().forEach(dStr => {
+            const currDate = new Date(dStr);
+            if (!prevDate) {
+              tempStreak = 1;
+            } else {
+              const expectedNext = new Date(prevDate);
+              expectedNext.setDate(expectedNext.getDate() + 1);
+              if (getLocalYMD(expectedNext) === getLocalYMD(currDate)) {
+                tempStreak++;
+              } else {
+                tempStreak = 1;
+              }
+            }
+            if (tempStreak > maxStreak) maxStreak = tempStreak;
+            prevDate = currDate;
+          });
+
+          // Best Day
+          let bestDay = "-";
+          let maxScore = -1;
+          const daysHe = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"];
+          uniqueDates.slice(0, 7).forEach(dStr => {
+            const dayRecords = checkinData.filter(d => d.date === dStr);
+            const sleep = dayRecords.find(d => d.sleep_hours)?.sleep_hours || 0;
+            const energy = dayRecords.find(d => d.energy_level)?.energy_level || 0;
+            const score = sleep + energy;
+            if (score > maxScore) {
+              maxScore = score;
+              bestDay = daysHe[new Date(dStr).getDay()];
+            }
+          });
+
           // Averages & Sleep Emoji
           let sleepSum = 0;
           let sleepCount = 0;
@@ -113,25 +148,47 @@ const DashboardPage = () => {
           const avgSleep = sleepCount > 0 ? sleepVal.toFixed(1) + " " + sleepEmoji : "0 😴";
           const avgEnergy = energyCount > 0 ? (energySum / energyCount).toFixed(1) : "0";
 
-          // Completion Rate
+          // Completion Rate & Top Task
           let completionRate = "0%";
+          let popularCategory = "-";
           try {
             const tzOffsetLocal = new Date().getTimezoneOffset() * 60000;
             const oneWeekAgo = new Date(Date.now() - tzOffsetLocal);
             oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
             
-            const { data: tasksData } = await supabase
+            // For completion rate (last 7 days)
+            const { data: recentTasks } = await supabase
               .from('tasks')
               .select('is_completed')
               .eq('user_id', user.id)
               .gte('created_at', oneWeekAgo.toISOString());
               
-            if (tasksData && tasksData.length > 0) {
-              const completed = tasksData.filter(t => t.is_completed).length;
-              completionRate = Math.round((completed / tasksData.length) * 100) + "%";
+            if (recentTasks && recentTasks.length > 0) {
+              const completed = recentTasks.filter(t => t.is_completed).length;
+              completionRate = Math.round((completed / recentTasks.length) * 100) + "%";
+            }
+
+            // For popular category (all completed tasks)
+            const { data: allCompletedTasks } = await supabase
+              .from('tasks')
+              .select('category')
+              .eq('user_id', user.id)
+              .eq('is_completed', true);
+
+            if (allCompletedTasks && allCompletedTasks.length > 0) {
+              const counts = {};
+              let maxCount = 0;
+              allCompletedTasks.forEach(t => {
+                const cat = t.category || 'אחר';
+                counts[cat] = (counts[cat] || 0) + 1;
+                if (counts[cat] > maxCount) {
+                  maxCount = counts[cat];
+                  popularCategory = cat;
+                }
+              });
             }
           } catch (e) {
-            console.error("Failed to calc completion rate", e);
+            console.error("Failed to calc tasks stats", e);
           }
 
           setStats({ 
@@ -141,7 +198,10 @@ const DashboardPage = () => {
             rawData: checkinData,
             uniqueDates: uniqueDates,
             checkinCount: checkinData.length,
-            completionRate
+            completionRate,
+            maxStreak,
+            bestDay,
+            popularCategory
           });
 
           // Fetch AI Insights in background if premium and enough data
@@ -153,7 +213,8 @@ const DashboardPage = () => {
                   `Date: ${d.date}, Sleep: ${d.sleep_hours}h, Energy: ${d.energy_level}/5, Active: ${d.was_active}`
                 ).join('\n');
                 
-                const aiResultStr = await generateDashboardInsights(summaryText);
+                const payload = `Checkins Data:\n${summaryText}\n\nTasks Data:\nCompletion Rate: ${completionRate}, Top Category: ${popularCategory}, Current Streak: ${currentStreak}, Best Streak: ${maxStreak}`;
+                const aiResultStr = await generateDashboardInsights(payload);
                 try {
                    // Safely parse JSON array
                    let cleanJsonStr = aiResultStr.replace(/```json/g, '').replace(/```/g, '').trim();
@@ -185,36 +246,6 @@ const DashboardPage = () => {
   if (loading) return <div className="loading">טוען נתונים...</div>;
 
   const isPremium = subType === 'premium';
-  
-  const getChartData = () => {
-    if (!stats.uniqueDates || stats.uniqueDates.length === 0) return [];
-    
-    const count = chartRange === 'week' ? 7 : 30;
-    const chartDates = stats.uniqueDates.slice(0, count).reverse();
-    const daysHe = ["א'", "ב'", "ג'", "ד'", "ה'", "ו'", "ש'"];
-    
-    return chartDates.map(dStr => {
-      const dayRecords = stats.rawData.filter(d => d.date === dStr);
-      const sleep = dayRecords.find(d => d.sleep_hours)?.sleep_hours || 0;
-      const energy = dayRecords.find(d => d.energy_level)?.energy_level || 0;
-      
-      const dObj = new Date(dStr);
-      
-      let label = daysHe[dObj.getDay()];
-      if (chartRange === 'month') {
-        label = `${dObj.getDate()}/${dObj.getMonth() + 1}`;
-      }
-
-      return {
-        day: label,
-        sleep: Math.min((sleep / 10) * 100, 100),
-        energy: Math.min((energy / 5) * 100, 100)
-      };
-    });
-  };
-
-  const chartData = getChartData();
-
   return (
     <div className="dashboard-page">
       <section className="dashboard-header">
@@ -247,36 +278,18 @@ const DashboardPage = () => {
             />
           ) : (
             <>
-              <div className="dashboard-chart-filters" style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginBottom: '1rem' }}>
-                <button 
-                  className={`filter-btn ${chartRange === 'month' ? 'active' : ''}`}
-                  onClick={() => setChartRange('month')}
-                  style={{
-                    padding: '0.4rem 1rem', borderRadius: '20px', border: '1px solid var(--color-primary-light)',
-                    background: chartRange === 'month' ? 'var(--color-primary-light)' : 'transparent',
-                    color: chartRange === 'month' ? 'var(--color-primary)' : 'var(--color-text-secondary)',
-                    cursor: 'pointer', fontWeight: '500', transition: 'all 0.2s ease'
-                  }}
-                >
-                  חודש
-                </button>
-                <button 
-                  className={`filter-btn ${chartRange === 'week' ? 'active' : ''}`}
-                  onClick={() => setChartRange('week')}
-                  style={{
-                    padding: '0.4rem 1rem', borderRadius: '20px', border: '1px solid var(--color-primary-light)',
-                    background: chartRange === 'week' ? 'var(--color-primary-light)' : 'transparent',
-                    color: chartRange === 'week' ? 'var(--color-primary)' : 'var(--color-text-secondary)',
-                    cursor: 'pointer', fontWeight: '500', transition: 'all 0.2s ease'
-                  }}
-                >
-                  שבוע
-                </button>
-              </div>
-
-              <WeeklyChart data={chartData} />
+              <WeeklyChart rawData={stats.rawData} uniqueDates={stats.uniqueDates} />
               
-              <MoodChart data={chartData} />
+              <HabitsTracker rawData={stats.rawData} uniqueDates={stats.uniqueDates} />
+
+              <div style={{ marginTop: '2rem' }}>
+                <h3 style={{ fontSize: '1.2rem', marginBottom: '1rem', color: 'var(--color-primary)' }}>תובנות הפרימיום שלך</h3>
+                <section className="stats-grid">
+                  <StatCard icon="local_fire_department" number={`${stats.streak}`} label={`שיא אישי: ${stats.maxStreak}`} />
+                  <StatCard icon="star" number={stats.bestDay} label="היום הכי טוב" />
+                  <StatCard icon="favorite" number={stats.popularCategory} label="משימה פופולרית" />
+                </section>
+              </div>
 
               <div style={{ marginTop: '1.5rem' }}>
                 {loadingInsights ? (
