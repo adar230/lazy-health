@@ -45,6 +45,18 @@ const DailyTaskPage = () => {
             if (checkinData) {
               setTask(prev => ({ ...prev, free_time: checkinData.free_time }));
             }
+
+            // Fetch the minimal task associated with this checkin
+            const { data: minimalData } = await supabase
+              .from('tasks')
+              .select('*')
+              .eq('checkin_id', taskData.checkin_id)
+              .eq('is_minimal', true)
+              .single();
+              
+            if (minimalData) {
+              setTask(prev => ({ ...prev, minimalTask: minimalData }));
+            }
           }
         }
       } catch (err) {
@@ -110,8 +122,8 @@ const DailyTaskPage = () => {
 
       <FallbackTaskCard 
         icon="water_drop"
-        label="משימה מינימלית חלופית"
-        description="שתי כוס מים עכשיו. זה הכל. גם זה נחשב."
+        label={task?.minimalTask?.title || "משימה מינימלית חלופית"}
+        description={task?.minimalTask?.description || "שתי כוס מים עכשיו. זה הכל. גם זה נחשב."}
         buttonText="גם את זה עשיתי"
       />
 

@@ -5,13 +5,15 @@ import QuestionCard from '../../components/QuestionCard/QuestionCard';
 import PillButton from '../../components/PillButton/PillButton';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
-import { generateDailyTask } from '../../lib/gemini';
+import { generateDailyTask, generateMinimalTask } from '../../lib/gemini';
 import './DailyCheckInPage.css';
 
 const DailyCheckInPage = () => {
   const [sleepHours, setSleepHours] = useState(null);
   const [energyLevel, setEnergyLevel] = useState(null);
   const [freeTime, setFreeTime] = useState(null);
+  const [waterGlasses, setWaterGlasses] = useState(null);
+  const [ateHealthy, setAteHealthy] = useState(null);
   const [loading, setLoading] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [missingFields, setMissingFields] = useState([]);
@@ -21,6 +23,8 @@ const DailyCheckInPage = () => {
 
   const sleepOptions = ['פחות מ-5', '5—6', '6—7', '7—8', 'יותר מ-8'];
   const energyOptions = ['1', '2', '3', '4', '5'];
+  const waterOptions = ['פחות מ-4', '4-6', '7-8', 'יותר מ-8'];
+  const foodOptions = ['כן', 'חלקית', 'לא'];
 
   const handleSubmit = async () => {
     setSubmitError('');
@@ -28,6 +32,8 @@ const DailyCheckInPage = () => {
     if (!sleepHours) missing.push('sleep');
     if (!energyLevel) missing.push('energy');
     if (!freeTime) missing.push('freeTime');
+    if (!waterGlasses) missing.push('water');
+    if (!ateHealthy) missing.push('food');
 
     if (missing.length > 0) {
       setMissingFields(missing);
@@ -49,6 +55,14 @@ const DailyCheckInPage = () => {
     else if (sleepHours === '7—8' || sleepHours === '7-8') sleepHoursFloat = 7.5;
     else if (sleepHours === 'יותר מ-8') sleepHoursFloat = 9;
 
+    let waterInt = 2;
+    if (waterGlasses === '4-6') waterInt = 5;
+    else if (waterGlasses === '7-8') waterInt = 7;
+    else if (waterGlasses === 'יותר מ-8') waterInt = 9;
+
+    let foodBool = true;
+    if (ateHealthy === 'לא') foodBool = false;
+
     try {
       const { data: checkinData, error: checkinError } = await supabase.from('daily_checkins').insert({
         user_id: user?.id,
@@ -56,15 +70,20 @@ const DailyCheckInPage = () => {
         sleep_hours: sleepHoursFloat,
         energy_level: parseInt(energyLevel, 10),
         free_time: freeTimeInt,
+        water_glasses: waterInt,
+        ate_healthy: foodBool,
         checkin_type: 'morning'
       }).select().single();
 
       if (checkinError) throw checkinError;
 
-      // Generate task with AI
-      const aiTask = await generateDailyTask(sleepHours, energyLevel, freeTime);
+      // Generate both tasks concurrently
+      const [aiTask, minimalAiTask] = await Promise.all([
+        generateDailyTask(sleepHours, energyLevel, freeTime),
+        generateMinimalTask(sleepHours, energyLevel, freeTime)
+      ]);
 
-      // Save task to Supabase
+      // Save main task to Supabase
       const { data: taskData, error: taskError } = await supabase.from('tasks').insert({
         user_id: user?.id,
         checkin_id: checkinData.id,
@@ -77,6 +96,20 @@ const DailyCheckInPage = () => {
       }).select().single();
 
       if (taskError) throw taskError;
+
+      // Save minimal task to Supabase
+      const { error: minimalTaskError } = await supabase.from('tasks').insert({
+        user_id: user?.id,
+        checkin_id: checkinData.id,
+        title: minimalAiTask.title,
+        description: minimalAiTask.description,
+        category: minimalAiTask.category,
+        difficulty: minimalAiTask.difficulty,
+        is_completed: false,
+        is_minimal: true
+      });
+
+      if (minimalTaskError) throw minimalTaskError;
 
       localStorage.setItem('latest_task_id', taskData.id);
 
@@ -155,6 +188,40 @@ const DailyCheckInPage = () => {
               selected={freeTime === 'יותר משעה'} 
               onClick={() => setFreeTime('יותר משעה')} 
             />
+          </div>
+        </QuestionCard>
+
+        <QuestionCard 
+          icon="water_drop" 
+          question="כמה כוסות מים שתית היום?" 
+          error={missingFields.includes('water') ? "שדה חובה — בחר כדי להמשיך" : ""}
+        >
+          <div className="grid-cols-2">
+            {waterOptions.map(opt => (
+              <PillButton 
+                key={opt} 
+                label={opt} 
+                selected={waterGlasses === opt} 
+                onClick={() => setWaterGlasses(opt)} 
+              />
+            ))}
+          </div>
+        </QuestionCard>
+
+        <QuestionCard 
+          icon="restaurant" 
+          question="האם אכלת בריא היום?" 
+          error={missingFields.includes('food') ? "שדה חובה — בחר כדי להמשיך" : ""}
+        >
+          <div className="flex-between">
+            {foodOptions.map(opt => (
+              <PillButton 
+                key={opt} 
+                label={opt} 
+                selected={ateHealthy === opt} 
+                onClick={() => setAteHealthy(opt)} 
+              />
+            ))}
           </div>
         </QuestionCard>
 
