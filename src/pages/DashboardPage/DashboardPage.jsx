@@ -18,6 +18,7 @@ const DashboardPage = () => {
   const [stats, setStats] = useState({ avgSleep: "0", avgEnergy: "0", streak: 0, rawData: [], uniqueDates: [], checkinCount: 0, completionRate: "0%", popularCategory: "-", maxStreak: 0, bestDay: "-" });
   const [aiInsights, setAiInsights] = useState(null);
   const [loadingInsights, setLoadingInsights] = useState(false);
+  const [chartRange, setChartRange] = useState('week');
 
   useEffect(() => {
     const fetchSubscription = async () => {
@@ -129,7 +130,7 @@ const DashboardPage = () => {
             }
           });
 
-          // Averages & Sleep Emoji
+          // Averages
           let sleepSum = 0;
           let sleepCount = 0;
           let energySum = 0;
@@ -141,11 +142,7 @@ const DashboardPage = () => {
           });
           
           const sleepVal = sleepCount > 0 ? (sleepSum / sleepCount) : 0;
-          let sleepEmoji = '😴';
-          if (sleepVal >= 6 && sleepVal <= 8) sleepEmoji = '😊';
-          if (sleepVal > 8) sleepEmoji = '🌟';
-          
-          const avgSleep = sleepCount > 0 ? sleepVal.toFixed(1) + " " + sleepEmoji : "0 😴";
+          const avgSleep = sleepCount > 0 ? sleepVal.toFixed(1) : "0";
           const avgEnergy = energyCount > 0 ? (energySum / energyCount).toFixed(1) : "0";
 
           // Completion Rate & Top Task
@@ -203,36 +200,6 @@ const DashboardPage = () => {
             bestDay,
             popularCategory
           });
-
-          // Fetch AI Insights in background if premium and enough data
-          if (subData && subData.is_active && checkinData.length >= 3) {
-            const fetchInsights = async () => {
-              setLoadingInsights(true);
-              try {
-                const summaryText = checkinData.slice(0, 7).map(d => 
-                  `Date: ${d.date}, Sleep: ${d.sleep_hours}h, Energy: ${d.energy_level}/5, Active: ${d.was_active}`
-                ).join('\n');
-                
-                const payload = `Checkins Data:\n${summaryText}\n\nTasks Data:\nCompletion Rate: ${completionRate}, Top Category: ${popularCategory}, Current Streak: ${currentStreak}, Best Streak: ${maxStreak}`;
-                const aiResultStr = await generateDashboardInsights(payload);
-                try {
-                   // Safely parse JSON array
-                   let cleanJsonStr = aiResultStr.replace(/```json/g, '').replace(/```/g, '').trim();
-                   const parsed = JSON.parse(cleanJsonStr);
-                   if (Array.isArray(parsed)) {
-                     setAiInsights(parsed);
-                   }
-                } catch (e) {
-                   setAiInsights(["הקפד על שעות השינה שלך, זה קריטי לאנרגיה ביום למחרת.", "שתיית מים בבוקר משפרת את הריכוז.", "נסה להוסיף 5 דקות של הליכה בסוף היום."]);
-                }
-              } catch (err) {
-                console.error("AI Insight Error:", err);
-              } finally {
-                setLoadingInsights(false);
-              }
-            };
-            fetchInsights();
-          }
         }
       } catch (err) {
         console.error('Error fetching data in dashboard:', err);
@@ -242,6 +209,38 @@ const DashboardPage = () => {
     };
     fetchSubscription();
   }, [user]);
+
+  // Separate effect for AI insights
+  useEffect(() => {
+    if (loading || subType !== 'premium' || stats.rawData.length < 3) return;
+
+    const fetchInsights = async () => {
+      setLoadingInsights(true);
+      try {
+        const numDays = chartRange === 'week' ? 7 : 30;
+        const summaryText = stats.rawData.slice(0, numDays).map(d => 
+          `Date: ${d.date}, Sleep: ${d.sleep_hours}h, Energy: ${d.energy_level}/5, Active: ${d.was_active}`
+        ).join('\n');
+        
+        const payload = `Checkins Data (Last ${numDays} days):\n${summaryText}\n\nTasks Data:\nCompletion Rate: ${stats.completionRate}, Top Category: ${stats.popularCategory}, Current Streak: ${stats.streak}, Best Streak: ${stats.maxStreak}`;
+        const aiResultStr = await generateDashboardInsights(payload);
+        try {
+           let cleanJsonStr = aiResultStr.replace(/```json/g, '').replace(/```/g, '').trim();
+           const parsed = JSON.parse(cleanJsonStr);
+           if (Array.isArray(parsed)) {
+             setAiInsights(parsed);
+           }
+        } catch (e) {
+           setAiInsights(["הקפד על שעות השינה שלך, זה קריטי לאנרגיה ביום למחרת.", "שתיית מים בבוקר משפרת את הריכוז.", "נסה להוסיף 5 דקות של הליכה בסוף היום."]);
+        }
+      } catch (err) {
+        console.error("AI Insight Error:", err);
+      } finally {
+        setLoadingInsights(false);
+      }
+    };
+    fetchInsights();
+  }, [chartRange, loading, subType, stats.rawData, stats.completionRate, stats.popularCategory, stats.streak, stats.maxStreak]);
 
   if (loading) return <div className="loading">טוען נתונים...</div>;
 
@@ -256,7 +255,7 @@ const DashboardPage = () => {
 
       <section className="stats-grid">
         <StatCard icon="bolt" number={stats.avgEnergy} label="אנרגיה ממוצעת" />
-        <StatCard icon="spa" number={stats.avgSleep} label="שעות שינה" />
+        <StatCard icon="spa" number={stats.avgSleep} label="שעות שינה ממוצעות" />
         <StatCard icon="fitness_center" number={stats.streak.toString()} label="ימים ברצף" />
         <StatCard icon="task_alt" number={stats.completionRate} label="השלמת משימות" />
       </section>
@@ -278,16 +277,16 @@ const DashboardPage = () => {
             />
           ) : (
             <>
-              <WeeklyChart rawData={stats.rawData} uniqueDates={stats.uniqueDates} />
+              <WeeklyChart rawData={stats.rawData} uniqueDates={stats.uniqueDates} chartRange={chartRange} onRangeChange={setChartRange} />
               
               <HabitsTracker rawData={stats.rawData} uniqueDates={stats.uniqueDates} />
 
               <div style={{ marginTop: '2rem' }}>
                 <h3 style={{ fontSize: '1.2rem', marginBottom: '1rem', color: 'var(--color-primary)' }}>תובנות הפרימיום שלך</h3>
-                <section className="stats-grid">
-                  <StatCard icon="local_fire_department" number={`${stats.streak}`} label={`שיא אישי: ${stats.maxStreak}`} />
-                  <StatCard icon="star" number={stats.bestDay} label="היום הכי טוב" />
-                  <StatCard icon="favorite" number={stats.popularCategory} label="משימה פופולרית" />
+                <section className="stats-grid premium-stats-grid">
+                  <StatCard title="🔥 רצף יומי" number={`${stats.streak}`} label="ימים ברציפות" subtext={`שיא אישי: ${stats.maxStreak} ימים`} />
+                  <StatCard title="⭐ היום הכי טוב" number={stats.bestDay} subtext="שינה + אנרגיה גבוהה" />
+                  <StatCard title="❤️ קטגוריה מובילה" number={stats.popularCategory} subtext="המשימות שהכי הושלמו" />
                 </section>
               </div>
 

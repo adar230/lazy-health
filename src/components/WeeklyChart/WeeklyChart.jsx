@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import './WeeklyChart.css';
 
-const WeeklyChart = ({ rawData, uniqueDates }) => {
-  const [chartRange, setChartRange] = useState('week');
-
+const WeeklyChart = ({ rawData, uniqueDates, chartRange, onRangeChange }) => {
   const getChartData = () => {
     if (!uniqueDates || uniqueDates.length === 0) return [];
     
@@ -39,13 +37,13 @@ const WeeklyChart = ({ rawData, uniqueDates }) => {
         <div className="chart-filters">
           <button 
             className={`filter-btn ${chartRange === 'month' ? 'active' : ''}`}
-            onClick={() => setChartRange('month')}
+            onClick={() => onRangeChange('month')}
           >
             חודש
           </button>
           <button 
             className={`filter-btn ${chartRange === 'week' ? 'active' : ''}`}
-            onClick={() => setChartRange('week')}
+            onClick={() => onRangeChange('week')}
           >
             שבוע
           </button>
