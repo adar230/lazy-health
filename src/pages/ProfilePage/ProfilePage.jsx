@@ -105,6 +105,15 @@ const ProfilePage = () => {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      navigate('/');
+    } catch (error) {
+      console.error('Error logging out:', error.message);
+    }
+  };
+
   if (loading) return <div className="loading">טוען פרופיל...</div>;
 
   const displayName = profileData?.name || user?.user_metadata?.full_name || user?.email;
@@ -155,6 +164,13 @@ const ProfilePage = () => {
               </button>
             </div>
           )}
+        </div>
+
+        <div className="logout-section">
+          <button className="logout-btn" onClick={handleLogout}>
+            <span className="material-symbols-outlined">logout</span>
+            התנתקות
+          </button>
         </div>
       </div>
     </div>

@@ -162,3 +162,33 @@
   color: var(--color-on-surface-variant);
   margin: 0;
 }
+
+.logout-section {
+  margin-top: var(--space-xl);
+  border-top: var(--border-thin) solid var(--color-surface-container-highest);
+  padding-top: var(--space-lg);
+  display: flex;
+  justify-content: center;
+}
+
+.logout-btn {
+  background-color: transparent;
+  color: var(--color-on-surface-variant);
+  border: 1px solid var(--color-surface-container-highest);
+  padding: var(--space-sm) var(--space-lg);
+  border-radius: var(--radius-full);
+  font-family: var(--font-family-sans);
+  font-weight: 500;
+  font-size: var(--font-body-md-size);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.logout-btn:hover {
+  background-color: var(--color-error-container);
+  color: var(--color-error);
+  border-color: var(--color-error-container);
+}
