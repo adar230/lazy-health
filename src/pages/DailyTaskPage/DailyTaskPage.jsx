@@ -55,12 +55,15 @@ const DailyTaskPage = () => {
             }
 
             // Fetch the minimal task associated with this checkin
-            const { data: minimalData } = await supabase
+            const { data: minimalData, error: minErr } = await supabase
               .from('tasks')
               .select('*')
               .eq('checkin_id', taskData.checkin_id)
               .eq('is_minimal', true)
-              .single();
+              .limit(1)
+              .maybeSingle();
+              
+            if (minErr) console.error("Error fetching minimal task:", minErr);
               
             if (minimalData) {
               setTask(prev => ({ ...prev, minimalTask: minimalData }));
@@ -124,13 +127,20 @@ const DailyTaskPage = () => {
   };
 
   const handleCompleteMinimal = async () => {
+    console.log("--- Debug Minimal Task Update ---");
+    console.log("Full task object:", task);
+    console.log("Minimal Task Object:", task?.minimalTask);
+    console.log("Minimal Task ID to update:", task?.minimalTask?.id);
+
     if (!task?.minimalTask || isCompletingMinimal) {
+      console.warn("No minimal task found or already completing, redirecting to dashboard");
       if (!task?.minimalTask) navigate('/dashboard');
       return;
     }
     setIsCompletingMinimal(true);
     try {
-      await supabase.from('tasks').update({ is_completed: true }).eq('id', task.minimalTask.id);
+      const { data, error } = await supabase.from('tasks').update({ is_completed: true }).eq('id', task.minimalTask.id).select();
+      console.log("Supabase Update Result:", data, error);
       setTimeout(() => navigate('/dashboard'), 800);
     } catch (err) {
       console.error('Failed to complete minimal task', err);
