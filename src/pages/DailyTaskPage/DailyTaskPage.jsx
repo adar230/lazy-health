@@ -1,15 +1,90 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../contexts/AuthContext';
 import TaskCard from '../../components/TaskCard/TaskCard';
 import FallbackTaskCard from '../../components/FallbackTaskCard/FallbackTaskCard';
 import MotivationalSection from '../../components/MotivationalSection/MotivationalSection';
 import './DailyTaskPage.css';
 
 const DailyTaskPage = () => {
+  const { user } = useAuth();
+  const [task, setTask] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchLatestTask = async () => {
+      if (!user) return;
+      try {
+        // Fetch the most recent task for the user
+        const { data: taskData, error: taskError } = await supabase
+          .from('tasks')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .single();
+
+        if (taskData) {
+          setTask(taskData);
+          
+          // Fetch free time from the associated checkin
+          if (taskData.checkin_id) {
+            const { data: checkinData } = await supabase
+              .from('daily_checkins')
+              .select('free_time')
+              .eq('id', taskData.checkin_id)
+              .single();
+              
+            if (checkinData) {
+              setTask(prev => ({ ...prev, free_time: checkinData.free_time }));
+            }
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching latest task:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchLatestTask();
+  }, [user]);
+
+  // Format current date in Hebrew
+  const currentDate = new Date().toLocaleDateString('he-IL', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long'
+  });
+
+  if (loading) {
+    return (
+      <div className="daily-task-page">
+        <div className="loading" style={{ textAlign: 'center', marginTop: '2rem' }}>טוען את המשימה שלך...</div>
+      </div>
+    );
+  }
+
+  // Fallback to default if no task found
+  const taskTitle = task?.title || "הליכה של 15 דקות";
+  const taskDesc = task?.description || "צאי החוצה, שאפי אוויר צח, זז'י קצת.";
+  const taskCategory = task?.category || "פעילות גופנית";
+  
+  // Use the fetched free time or fallback to 20
+  const freeTime = task?.free_time || 20;
+
+  // Map category to a nice icon
+  let catIcon = "fitness_center";
+  if (taskCategory.includes('שינה')) catIcon = "bedtime";
+  if (taskCategory.includes('תזונה') || taskCategory.includes('אוכל')) catIcon = "restaurant";
+  if (taskCategory.includes('שתייה') || taskCategory.includes('מים')) catIcon = "water_drop";
+  if (taskCategory.includes('חיים') || taskCategory.includes('נפש') || taskCategory.includes('מיינדפולנס')) catIcon = "self_improvement";
+
   return (
     <div className="daily-task-page">
       <section className="task-page-header">
-        <p className="task-page-subtitle">המשימה שלך להיום</p>
-        <h2 className="task-page-title">יש לך 20 דקות — בואי נשתמש בהן</h2>
+        <p className="task-page-subtitle">המשימה שלך להיום, {currentDate}</p>
+        <h2 className="task-page-title">יש לך {freeTime} דקות — בואי נשתמש בהן</h2>
         <div className="streak-container">
           <span className="streak-text">7 ימים ברצף — כל הכבוד!</span>
           <span className="material-symbols-outlined streak-icon" style={{ fontVariationSettings: "'FILL' 1" }}>
@@ -19,11 +94,11 @@ const DailyTaskPage = () => {
       </section>
 
       <TaskCard 
-        icon="directions_walk"
-        title="הליכה של 15 דקות"
-        description="צאי החוצה, שאפי אוויר צח, זז'י קצת."
-        categoryIcon="fitness_center"
-        categoryName="פעילות גופנית"
+        icon={catIcon}
+        title={taskTitle}
+        description={taskDesc}
+        categoryIcon={catIcon}
+        categoryName={taskCategory}
       />
 
       <FallbackTaskCard 
