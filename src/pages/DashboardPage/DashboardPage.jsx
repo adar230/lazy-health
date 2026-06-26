@@ -32,12 +32,19 @@ const DashboardPage = () => {
           setSubType(subData.type);
         }
 
-        const { data: checkinData } = await supabase
+        const { data: checkinData, error: checkinError } = await supabase
           .from('daily_checkins')
           .select('*')
           .eq('user_id', user.id)
           .order('date', { ascending: false })
           .limit(20);
+
+        console.log("--- Dashboard Debug ---");
+        console.log("1. User ID used for query:", user?.id);
+        console.log("2. Rows returned from Supabase:", checkinData?.length);
+        console.log("3. Actual data:", checkinData);
+        if (checkinError) console.error("Query Error:", checkinError);
+        console.log("-----------------------");
 
         if (checkinData && checkinData.length > 0) {
           const uniqueDates = [...new Set(checkinData.map(d => d.date))].sort((a,b) => b.localeCompare(a));
@@ -110,7 +117,7 @@ const DashboardPage = () => {
             avgEnergy, 
             streak: currentStreak, 
             chartData: chartDataMapped, 
-            checkinCount: uniqueDates.length 
+            checkinCount: checkinData.length 
           });
         }
       } catch (err) {
