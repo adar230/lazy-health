@@ -65,7 +65,7 @@ const DailyCheckInPage = () => {
       const aiTask = await generateDailyTask(sleepHours, energyLevel, freeTime);
 
       // Save task to Supabase
-      const { error: taskError } = await supabase.from('tasks').insert({
+      const { data: taskData, error: taskError } = await supabase.from('tasks').insert({
         user_id: user?.id,
         checkin_id: checkinData.id,
         title: aiTask.title,
@@ -74,9 +74,11 @@ const DailyCheckInPage = () => {
         difficulty: aiTask.difficulty,
         is_completed: false,
         is_minimal: false
-      });
+      }).select().single();
 
       if (taskError) throw taskError;
+
+      localStorage.setItem('latest_task_id', taskData.id);
 
       navigate('/task');
     } catch (err) {

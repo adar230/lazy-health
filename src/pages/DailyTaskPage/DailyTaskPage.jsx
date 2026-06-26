@@ -15,14 +15,21 @@ const DailyTaskPage = () => {
     const fetchLatestTask = async () => {
       if (!user) return;
       try {
-        // Fetch the most recent task for the user
-        const { data: taskData, error: taskError } = await supabase
-          .from('tasks')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false })
-          .limit(1)
-          .single();
+        // Fetch the most recent task for the user or by specific ID
+        const latestTaskId = localStorage.getItem('latest_task_id');
+        let query = supabase.from('tasks').select('*');
+        
+        if (latestTaskId) {
+          query = query.eq('id', latestTaskId).single();
+        } else {
+          query = query.eq('user_id', user.id).order('created_at', { ascending: false }).limit(1).single();
+        }
+
+        const { data: taskData, error: taskError } = await query;
+        
+        if (latestTaskId) {
+          localStorage.removeItem('latest_task_id');
+        }
 
         if (taskData) {
           setTask(taskData);
